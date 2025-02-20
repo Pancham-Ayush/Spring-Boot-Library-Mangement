@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body {
+            background: url('/oldbook.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .close {
+            float: right;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: red;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="p-6">
+
+<div class="max-w-2xl mx-auto bg-gray-900 bg-opacity-70 backdrop-blur-md p-8 rounded-xl shadow-2xl">
+    <h2 class="text-3xl font-extrabold text-center text-yellow-500 drop-shadow-lg mb-6">Search Results</h2>
+
+    <div th:if="${books.size() > 0}">
+        <ul class="space-y-6">
+            <li th:each="book : ${books}"
+                class="flex items-center p-5 bg-gray-800 bg-opacity-50 rounded-lg shadow-lg cursor-pointer transition-all hover:bg-gray-700"
+                onclick="openModal(this)"
+                th:attr="data-title=${book.title},
+                         data-author=${book.author},
+                         data-genre=${book.genre},
+                         data-description=${book.description != null and not #strings.isEmpty(book.description) ? book.description : 'No description available'},
+                         data-image=${book.image}">
+
+                <div class="flex-shrink-0 w-36 h-44 bg-gray-700 rounded-lg overflow-hidden">
+                    <img th:if="${book.image != null and book.image != 'noimage'}" th:src="'data:image/png;base64,' + ${book.image}" alt="Book Image"
+                         class="w-full h-full object-cover" />
+                    <p th:if="${book.image == null or book.image == 'noimage'}" class="text-gray-300 flex items-center justify-center h-full">No Image</p>
+                </div>
+
+                <div class="ml-6">
+                    <p class="text-xl font-extrabold text-white drop-shadow-md" th:text="${book.title}"></p>
+                    <p class="text-lg text-gray-300 font-semibold drop-shadow-sm" th:text="'Author: ' + ${book.author}"></p>
+                    <p class="text-lg text-gray-300 font-semibold drop-shadow-sm" th:text="'Genre: ' + ${book.genre}"></p>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div th:if="${books.size()==0}" class="text-center text-red-400 font-bold text-lg">
+        <p>No books found.</p>
+    </div>
+
+    <div class="text-center mt-8">
+        <a href="/books" class="bg-yellow-500 text-black text-lg font-semibold px-5 py-3 rounded-lg hover:bg-yellow-600 transition-all shadow-lg">
+            Home
+        </a>
+    </div>
+</div>
+
+<div id="bookModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div class="text-center">
+            <img id="bookImage" src="" alt="Book Image" class="img-fluid mb-3" style="max-height: 300px; display: none;">
+        </div>
+        <h5 class="text-2xl font-bold text-gray-800">📖 <span id="bookTitle"></span></h5>
+        <p class="text-lg text-gray-700"><strong>Author:</strong> <span id="bookAuthor"></span></p>
+        <p class="text-lg text-gray-700"><strong>Genre:</strong> <span id="bookGenre"></span></p>
+        <p class="text-lg text-gray-700"><strong>Description:</strong></p>
+        <p id="bookDescription" class="text-gray-600"></p>
+    </div>
+</div>
+
+<script>
+    function openModal(element) {
+        var title = element.getAttribute("data-title");
+        var author = element.getAttribute("data-author");
+        var genre = element.getAttribute("data-genre");
+        var description = element.getAttribute("data-description");
+        var image = element.getAttribute("data-image");
+
+        document.getElementById("bookTitle").textContent = title;
+        document.getElementById("bookAuthor").textContent = author;
+        document.getElementById("bookGenre").textContent = genre;
+        document.getElementById("bookDescription").textContent = description || 'No description available';
+
+        var bookImage = document.getElementById("bookImage");
+        if (image && image !== 'noimage') {
+            bookImage.src = 'data:image/png;base64,' + image;
+            bookImage.style.display = 'block';
+        } else {
+            bookImage.style.display = 'none';
+        }
+
+        document.getElementById("bookModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("bookModal").style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        var modal = document.getElementById("bookModal");
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+</script>
+
+</body>
+</html>

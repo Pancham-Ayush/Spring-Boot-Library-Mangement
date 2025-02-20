@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Book Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url('/laderr.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .glass-box {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            color: white;
+            cursor: pointer;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .close-btn:hover {
+            color: red;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 font-sans p-6">
+
+<!-- Search Section -->
+<div th:if="${search}" class="max-w-2xl mx-auto p-10 glass-box space-y-6">
+    <a href="/books" class="close-btn">&times;</a> <!-- Close Button -->
+    <h2 class="text-4xl font-bold text-center text-white drop-shadow-lg">Search for a Book</h2>
+    <form method="post" action="/books/get" class="space-y-6">
+        <div class="flex items-center space-x-4 flex-nowrap">
+            <label for="search" class="text-xl font-semibold text-white drop-shadow-md">Book :</label>
+            <input type="text" name="search" id="search" placeholder="Enter book detail" required
+                   class="flex-1 px-5 py-3 rounded-xl bg-transparent text-white placeholder-gray-300 border border-white focus:outline-none focus:ring-4 focus:ring-yellow-500 shadow-lg">
+        </div>
+        <div>
+            <button type="submit"
+                    class="w-full bg-yellow-600 text-white text-lg font-semibold py-3 rounded-xl hover:bg-yellow-700 transition-all shadow-lg">
+                Search
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Delete Section -->
+<div th:if="${delete}" class="max-w-lg mx-auto p-8 glass-box space-y-6">
+    <a href="/books" class="close-btn">&times;</a> <!-- Close Button -->
+    <h2 class="text-4xl font-bold text-center text-white drop-shadow-lg">🗑 Delete a Book</h2>
+    <form method="post" action="/books/delete" class="space-y-5">
+        <div>
+            <label for="id" class="block text-lg font-semibold text-white">Book ID to Remove:</label>
+            <input type="text" name="id" id="id" placeholder="Enter book ID to remove" required
+                   class="w-full px-5 py-3 rounded-xl bg-transparent text-white placeholder-gray-300 border border-white focus:outline-none focus:ring-4 focus:ring-red-500 shadow-lg">
+        </div>
+        <div>
+            <button type="submit"
+                    class="w-full bg-red-600 text-white text-lg font-semibold py-3 rounded-xl hover:bg-red-700 transition-all shadow-lg transform hover:scale-105">
+                Delete Book
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Update Section -->
+<div th:if="${update}" class="max-w-lg mx-auto p-8 glass-box space-y-6 mt-8">
+    <a href="/books" class="close-btn">&times;</a> <!-- Close Button -->
+    <h2 class="text-3xl font-semibold text-center text-purple-300">Update a Book</h2>
+    <form method="post" action="/books/update" class="space-y-4">
+        <div>
+            <label for="id" class="block text-lg text-white">Book ID to Update:</label>
+            <input type="text" name="id" id="id" placeholder="Enter book ID to update" required
+                   class="w-full px-4 py-2 rounded-lg bg-transparent text-white border border-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+        <div>
+            <button type="submit"
+                    class="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition-all">
+                Update
+            </button>
+        </div>
+    </form>
+</div>
+
+</body>
+
+</html>

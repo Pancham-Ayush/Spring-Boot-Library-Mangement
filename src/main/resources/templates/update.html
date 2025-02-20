@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Book</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-image: url('/upd.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            position: relative;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="font-sans">
+
+<div class="card">
+
+    <!-- Close Button (Takes User to Home) -->
+    <a href="/books"
+       class="absolute top-3 right-3 text-white text-2xl font-bold hover:text-red-400 transition duration-200">
+        &times;
+    </a>
+
+    <div th:if="${present}">
+        <h2 class="text-3xl font-bold text-center text-white mb-6">Update Book Details</h2>
+
+        <form action="/books/up" method="post" th:object="${book}" class="space-y-5" enctype="multipart/form-data">
+
+            <input type="hidden" th:field="*{id}">
+
+            <div>
+                <label for="title" class="block text-lg text-white font-semibold">Book Title:</label>
+                <input type="text" th:field="*{title}" id="title" placeholder="Enter book title" required
+                       class="w-full px-4 py-2 bg-gray-200 text-black border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500">
+            </div>
+
+            <div>
+                <label for="genre" class="block text-lg text-white font-semibold">Genre:</label>
+                <input type="text" th:field="*{genre}" id="genre" placeholder="Enter book genre" required
+                       class="w-full px-4 py-2 bg-gray-200 text-black border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500">
+            </div>
+
+            <div>
+                <label for="description" class="block text-lg text-white font-semibold">Description:</label>
+                <input type="text" th:field="*{description}" id="description" placeholder="Enter book description"
+                       class="w-full px-4 py-2 bg-gray-200 text-black border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500">
+            </div>
+
+            <div>
+                <label for="author" class="block text-lg text-white font-semibold">Author's Name:</label>
+                <input type="text" th:field="*{author}" id="author" placeholder="Enter author's name" required
+                       class="w-full px-4 py-2 bg-gray-200 text-black border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500">
+            </div>
+
+            <div>
+                <label class="block text-lg text-white font-semibold">Book Image:</label>
+                <input type="file" name="img" accept="image/*"
+                       class="w-full px-4 py-2 bg-gray-200 text-black border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500">
+            </div>
+
+            <div class="flex flex-col space-y-3">
+                <button type="submit"
+                        class="w-full bg-blue-600 text-white py-3 rounded-lg text-lg font-semibold transition-all transform hover:bg-blue-800 hover:scale-105">
+                    Save Book
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <div th:if="${absent}" class="text-center space-y-6">
+        <h2 class="text-3xl font-bold text-red-600">Book Not Found</h2>
+        <a href="/books"
+           class="inline-block bg-yellow-500 text-black px-6 py-3 rounded-lg text-lg font-semibold transition-all transform hover:bg-yellow-600 hover:scale-105">
+            Home
+        </a>
+    </div>
+
+</div>
+
+</body>
+</html>

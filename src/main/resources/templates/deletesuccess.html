@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Success</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Full Background Image */
+        body {
+            background: url('/save.webp') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Glassmorphism Effect */
+        .glass-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="max-w-lg w-full mx-auto p-10 rounded-2xl shadow-2xl glass-box text-center">
+    <!-- Book Deleted Successfully -->
+    <div th:if="${deleted}">
+        <p class="text-xl font-semibold mb-4 text-white">✅ Book Deleted Successfully!</p>
+        <h3 class="text-2xl font-bold mb-4 text-white" th:text="${book.title}"></h3>
+        <p class="text-lg text-gray-200 mb-2" th:text="'📖 Author: ' + ${book.author}"></p>
+        <p class="text-lg text-gray-200 mb-2" th:text="'🆔 ID: ' + ${book.id}"></p>
+        <p class="text-lg text-gray-200 mb-4" th:text="'📚 Genre: ' + ${book.genre}"></p>
+
+        <!-- Buttons -->
+        <a href="/books"
+           class="text-lg font-semibold text-white bg-blue-600 hover:bg-blue-800 py-3 px-8 rounded-xl transition duration-300 transform hover:scale-110 shadow-lg">
+            🔙 Back to Home
+        </a>
+    </div>
+
+    <!-- No Such Book Found -->
+    <div th:if="${absent}">
+        <h2 class="text-4xl font-extrabold text-black drop-shadow-lg mb-6">❌ No Such Book Found</h2>
+
+        <!-- Buttons -->
+        <div class="flex flex-col space-y-4">
+            <a href="/books"
+               class="text-lg font-semibold text-white bg-blue-600 hover:bg-blue-800 py-3 px-8 rounded-xl transition duration-300 transform hover:scale-110 shadow-lg">
+                🔙 Back to Home
+            </a>
+
+            <a href="/books/add"
+               class="text-lg font-semibold text-white bg-green-600 hover:bg-green-800 py-3 px-8 rounded-xl transition duration-300 transform hover:scale-110 shadow-lg">
+                ➕ Add a New Book
+            </a>
+
+            <a href="/books/get"
+               class="text-lg font-semibold text-white bg-yellow-600 hover:bg-yellow-800 py-3 px-8 rounded-xl transition duration-300 transform hover:scale-110 shadow-lg">
+                🔍 Search Again
+            </a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+.

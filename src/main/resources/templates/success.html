@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Result</title>
+</head>
+<body>
+
+<div>
+    <h2>Results</h2>
+
+    <div th:if="${books.size() > 0}">
+        <ul>
+            <li th:each="book : ${books}">
+                <div>
+                    <h3 th:text="${book.title}"></h3>
+                    <p th:text="'Author: ' + ${book.author}"></p>
+                    <p th:text="'ID: ' + ${book.id}"></p>
+                    <p th:text="'Genra: ' + ${book.genra}"></p>
+                </div>
+            </li>
+        </ul>
+        <a href="/books" class="list-group-item list-group-item-action">Home</a>
+    </div>
+
+    <div th:if="${books.size() == 0}">
+        <p>No books found.</p>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Reva Library</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Oswald:wght@500&family=Sacramento&display=swap" rel="stylesheet">
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .background {
+      background-image: url('/pexels-ivo-rainha-527110-1290141.jpg');
+      /* Correct path */
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    h1 {
+      color: rgba(255, 255, 255, 0.8);
+      font-family: 'Sacramento', cursive;
+      font-weight: 700;
+      font-size: 4rem;
+      position: absolute;
+      top: -90px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      z-index: 1;
+    }
+
+    .list-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 1;
+      position: relative;
+      margin-top: 100px;
+    }
+
+    .list-group-item {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: color 0.3s, transform 0.3s, box-shadow 0.3s;
+      font-weight: 700;
+      padding: 15px;
+      font-size: 1.1rem;
+      margin: 10px;
+      width: 300px;
+      text-align: center;
+      border-radius: 10px;
+    }
+
+    .list-group-item:hover {
+      background: transparent;
+      border: none;
+      color: rgba(210,105,30, 1);
+      box-shadow: none;
+      transform: none;
+      font-weight: 900;
+    }
+
+    .list-group-item.active {
+      background: transparent;
+      color: #FFFFFF;
+      border: none;
+    }
+
+    .container {
+      position: relative;
+    }
+
+  </style>
+</head>
+<body>
+<div class="background">
+  <div class="container">
+    <h1 class="text-center">Reva Library</h1>
+    <div class="list-group">
+      <a href="/books/add" class="list-group-item list-group-item-action">Add a New Book</a>
+      <a href="/books/all" class="list-group-item list-group-item-action">View All Books</a>
+      <a href="/books/get" class="list-group-item list-group-item-action">Search for a Book</a>
+      <a href="/books/delete" class="list-group-item list-group-item-action">Delete a Book</a>
+      <a href="/books/update" class="list-group-item list-group-item-action">Update a Book</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
