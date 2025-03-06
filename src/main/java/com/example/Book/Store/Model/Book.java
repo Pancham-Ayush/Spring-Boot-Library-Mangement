@@ -19,13 +19,15 @@ public class Book {
     private String genre;
     @Column(name = "author")
     private String author;
-    @Column(name = "image" , columnDefinition = "LONGTEXT")
-    private String image;
+    @Lob  // Store as binary data
+    @Column(columnDefinition = "LONGBLOB")  // Use LONGBLOB for large images
+    private byte[] image;
     @Column(name = "description")
     private String description;
     @Column(name = "total")
     private int total;
     @Column(name = "available")
     private int available;
+
 
 }
