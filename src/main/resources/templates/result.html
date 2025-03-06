@@ -1,150 +1,241 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Search Results</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Books</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
     <style>
-        body {
-            background: url('/oldbook.jpg') no-repeat center center fixed;
-            background-size: cover;
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
+        body {
+            background: linear-gradient(135deg, #ff7eb3, #ff4b2b, #4b79a1, #283e51);
+            background-size: 400% 400%;
+            animation: gradientMove 8s ease infinite;
+            font-family: 'Poppins', sans-serif;
+            color: white;
+        }
+
+        .glass-navbar {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 15px 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            margin-top: 40px;
+        }
+
+        /* Card Styling */
+
+        /* Modified Card Styling */
+        .card {
+            height: 280px; /* Reduced from 370px */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-img-top {
             width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            align-items: center;
-            justify-content: center;
+            height: 200px;
+            object-fit: contain;
+            display: block;
+            background-color: transparent; /* Changed from white to transparent */
+            padding: 5px; /* Reduced padding */
+            border-radius: 10px 10px 0 0; /* Optional rounded corners at top */
+            mix-blend-mode: multiply; /* Helps images blend with background */
+        }
+
+        /* For better blending, add this to the card */
+        .card {
+            background: rgba(255, 255, 255, 0.1); /* More transparent background */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+        }
+
+        .card-body {
+            text-align: center;
+            padding: 8px; /* Reduced padding */
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 0.9rem; /* Reduced font size */
+            margin-bottom: 0.3rem; /* Reduced spacing */
+            line-height: 1.2;
+        }
+
+        /* Optional: Reduce modal size */
+        .modal-dialog {
+            max-width: 600px; /* Reduced from default */
         }
 
         .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
-            animation: fadeIn 0.3s ease-in-out;
+            padding: 15px; /* Reduced padding */
         }
 
-        .close {
-            float: right;
-            font-size: 1.5rem;
+        .modal-title {
+            font-size: 1.1rem;
+        }    .card:hover {
+                 transform: scale(1.05);
+                 box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+             }
+
+
+
+
+
+        .btn {
+            transition: all 0.3s ease-in-out;
             font-weight: bold;
-            cursor: pointer;
-            transition: color 0.3s;
         }
 
-        .close:hover {
-            color: red;
+        .btn-primary {
+            background-color: #ff758c;
+            border: none;
         }
+
+        .btn-primary:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(255, 117, 140, 0.5);
+        }
+
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
+
+        .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .card,
+        .card-title {
+            color: #333 !important; /* Dark gray color for better contrast */
+        }
+
+        /* Optional: Enhance card background for better readability */
+        .card {
+            background: rgba(255, 255, 255, 0.3) !important; /* More opaque white */
+            backdrop-filter: blur(12px);
+        }
+
+        /* For modal text visibility */
+        .modal-content,
+        .modal-title {
+            color: #333;
+        }
+        .updated {
+            color: yellow;
+            font-weight: bold;
+            transition: color 0.5s ease-in-out;
+        }
+        /* Add margin between buttons */
+        .modal-content form {
+            margin-bottom: 1rem;
+        }
+
+        /* Or use Bootstrap spacing utilities directly in HTML */
+
     </style>
 </head>
-<body class="p-6">
+<body>
 
-<div class="max-w-2xl mx-auto bg-gray-900 bg-opacity-70 backdrop-blur-md p-8 rounded-xl shadow-2xl">
-    <h2 class="text-3xl font-extrabold text-center text-yellow-500 drop-shadow-lg mb-6">Search Results</h2>
-
-    <div th:if="${books.size() > 0}">
-        <ul class="space-y-6">
-            <li th:each="book : ${books}"
-                class="flex items-center p-5 bg-gray-800 bg-opacity-50 rounded-lg shadow-lg cursor-pointer transition-all hover:bg-gray-700"
-                onclick="openModal(this)"
-                th:attr="data-title=${book.title},
-                         data-author=${book.author},
-                         data-genre=${book.genre},
-                         data-description=${book.description != null and not #strings.isEmpty(book.description) ? book.description : 'No description available'},
-                         data-image=${book.image}">
-
-                <div class="flex-shrink-0 w-36 h-44 bg-gray-700 rounded-lg overflow-hidden">
-                    <img th:if="${book.image != null and book.image != 'noimage'}" th:src="'data:image/png;base64,' + ${book.image}" alt="Book Image"
-                         class="w-full h-full object-cover" />
-                    <p th:if="${book.image == null or book.image == 'noimage'}" class="text-gray-300 flex items-center justify-center h-full">No Image</p>
-                </div>
-
-                <div class="ml-6">
-                    <p class="text-xl font-extrabold text-white drop-shadow-md" th:text="${book.title}"></p>
-                    <p class="text-lg text-gray-300 font-semibold drop-shadow-sm" th:text="'Author: ' + ${book.author}"></p>
-                    <p class="text-lg text-gray-300 font-semibold drop-shadow-sm" th:text="'Genre: ' + ${book.genre}"></p>
-                </div>
-            </li>
-        </ul>
-    </div>
-
-    <div th:if="${books.size()==0}" class="text-center text-red-400 font-bold text-lg">
-        <p>No books found.</p>
-    </div>
-
-    <div class="text-center mt-8">
-        <a href="/books" class="bg-yellow-500 text-black text-lg font-semibold px-5 py-3 rounded-lg hover:bg-yellow-600 transition-all shadow-lg">
-            Home
+<!-- Glassmorphic Navbar -->
+<nav class="navbar navbar-expand-lg glass-navbar">
+    <div class="container-fluid">
+        <a th:href="@{/books}" class="btn btn-light">
+            <i class="bi bi-house-door-fill"></i> Home
         </a>
+    </div>
+</nav>
+
+<div class="container">
+    <h1 class="text-center">Search Result</h1>
+    <div class="row">
+        <div th:each="book : ${books}" class="col-md-3">
+            <div class="card mb-4 shadow-sm" data-bs-toggle="modal" th:attr="data-bs-target='#bookModal-' + ${book.id}">
+                <img th:src="${bookImages[book.id] != 'noimage'} ? 'data:image/jpeg;base64,' + ${bookImages[book.id]} : '/images/no-image.jpg'"
+                     class="card-img-top img-fluid" alt="Book Image">
+
+                <div class="card-body">
+                    <h5 class="card-title"><strong>Title:</strong> <span th:text="${book.title}"></span></h5>
+                    <h5 class="card-title"><strong>Author:</strong> <span th:text="${book.author}"></span></h5>
+                    <h5 class="card-title"><strong>Genre:</strong> <span th:text="${book.genre}"></span></h5>
+
+
+
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<div id="bookModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <div class="text-center">
-            <img id="bookImage" src="" alt="Book Image" class="img-fluid mb-3" style="max-height: 300px; display: none;">
+<!-- Book Modals -->
+<div th:each="book : ${books}" th:id="'bookModal-' + ${book.id}" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><strong>Title:</strong> <span th:text="${book.title}"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex">
+                <div class="col-md-6">
+                    <img th:src="${bookImages[book.id] != 'noimage'} ? 'data:image/jpeg;base64,' + ${bookImages[book.id]} : '/images/no-image.jpg'"
+                         class="modal-img img-fluid" alt="Book Image">
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Book Id:</strong> <span th:text="${book.id}"></span></p>
+                    <p><strong>Author:</strong> <span th:text="${book.author}"></span></p>
+                    <p><strong>Description:</strong> <span th:text="${book.description}"></span></p>
+                    <p><strong>Copies Available:</strong> <span th:id="'available-' + ${book.id}" th:text="${book.available}"></span></p>
+                    <form th:action="@{/books/lend}" method="post" th:if="${book.available > 0}">
+                        <input type="hidden" name="bookid" th:value="${book.id}" />
+                        <button type="submit" class="btn btn-primary">Issue Book</button>
+                    </form>
+
+                </div>
+            </div>
         </div>
-        <h5 class="text-2xl font-bold text-gray-800">📖 <span id="bookTitle"></span></h5>
-        <p class="text-lg text-gray-700"><strong>Author:</strong> <span id="bookAuthor"></span></p>
-        <p class="text-lg text-gray-700"><strong>Genre:</strong> <span id="bookGenre"></span></p>
-        <p class="text-lg text-gray-700"><strong>Description:</strong></p>
-        <p id="bookDescription" class="text-gray-600"></p>
     </div>
 </div>
 
 <script>
-    function openModal(element) {
-        var title = element.getAttribute("data-title");
-        var author = element.getAttribute("data-author");
-        var genre = element.getAttribute("data-genre");
-        var description = element.getAttribute("data-description");
-        var image = element.getAttribute("data-image");
-
-        document.getElementById("bookTitle").textContent = title;
-        document.getElementById("bookAuthor").textContent = author;
-        document.getElementById("bookGenre").textContent = genre;
-        document.getElementById("bookDescription").textContent = description || 'No description available';
-
-        var bookImage = document.getElementById("bookImage");
-        if (image && image !== 'noimage') {
-            bookImage.src = 'data:image/png;base64,' + image;
-            bookImage.style.display = 'block';
-        } else {
-            bookImage.style.display = 'none';
-        }
-
-        document.getElementById("bookModal").style.display = "flex";
+    function fetchBookAvailability() {
+        fetch('/books/availability')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(book => {
+                    let availableSpan = document.getElementById('available-' + book.id);
+                    if (availableSpan) {
+                        let newValue = book.available.toString().trim();
+                        if (availableSpan.textContent.trim() !== newValue) {
+                            availableSpan.innerHTML = newValue;
+                            availableSpan.classList.add("updated");
+                            setTimeout(() => availableSpan.classList.remove("updated"), 1000);
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching book availability:', error));
     }
-
-    function closeModal() {
-        document.getElementById("bookModal").style.display = "none";
-    }
-
-    window.onclick = function(event) {
-        var modal = document.getElementById("bookModal");
-        if (event.target === modal) {
-            closeModal();
-        }
-    }
+    setInterval(fetchBookAvailability, 5000);
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

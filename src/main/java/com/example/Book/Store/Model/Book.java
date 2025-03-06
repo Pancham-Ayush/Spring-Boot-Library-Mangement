@@ -1,4 +1,4 @@
-package com.example.Book.Store;
+package com.example.Book.Store.Model;
 
 import jakarta.persistence.*;
 import lombok.Data;

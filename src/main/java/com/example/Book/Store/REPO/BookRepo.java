@@ -1,7 +1,7 @@
 package com.example.Book.Store.REPO;
 
 
-import com.example.Book.Store.Book;
+import com.example.Book.Store.Model.Book;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
