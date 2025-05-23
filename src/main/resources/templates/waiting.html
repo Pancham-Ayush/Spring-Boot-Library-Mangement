@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Approval Request Received</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            Swal.fire({
+                title: "Request Received!",
+                text: "[[${message}]]",
+                icon: "success",
+                confirmButtonText: "OK",
+            }).then(() => {
+                window.location.href = "/login"; // Redirect to login after confirmation
+            });
+        });
+    </script>
+</head>
+<body></body>
+</html>

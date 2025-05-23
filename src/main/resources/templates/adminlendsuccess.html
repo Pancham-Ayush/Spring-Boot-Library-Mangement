@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Confirm Lending</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        .home-icon {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            text-decoration: none;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+        }
+        input {
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .cancel-link {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<a href="/admin" class="home-icon">&#8962;</a>
+<div class="container">
+    <h2>Confirm Lending</h2>
+    <p><strong>Book Id:</strong> <span th:text="${book.id}"></span></p>
+    <p><strong>Book Title:</strong> <span th:text="${book.title}"></span></p>
+    <p><strong>Author:</strong> <span th:text="${book.author}"></span></p>
+    <p><strong>Genre:</strong> <span th:text="${book.genre}"></span></p>
+    <p><strong>Description:</strong> <span th:text="${book.description}"></span></p>
+    <p><strong>Available Copies:</strong> <span id="availableCopies" th:text="${book.available}"></span></p>
+
+    <form th:action="@{/admin/lendend}" method="post">
+        <input type="hidden" name="bookid" th:value="${record.bookid}">
+        <input type="hidden" name="bookName" th:value="${record.bookName}">
+
+        <label for="name">Borrower's Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="email">Borrower's Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="date">Returning Date:</label>
+        <input type="date" id="date" name="date" required>
+
+        <button type="submit" id="submitButton">Confirm Lend</button>
+    </form>
+
+
+    <a href="/admin" class="cancel-link">Cancel</a>
+</div>
+
+<script>
+    let today = new Date();
+    let maxDate = new Date();
+    maxDate.setMonth(today.getMonth() + 1);
+
+    let todayStr = today.toISOString().split("T")[0];
+    let maxDateStr = maxDate.toISOString().split("T")[0];
+
+    let dateInput = document.getElementById("date");
+    dateInput.setAttribute("min", todayStr);
+    dateInput.setAttribute("max", maxDateStr);
+
+    let bookId = document.querySelector("input[name='bookid']").value;
+    let availableCopiesElement = document.querySelector("#availableCopies");
+    let submitButton = document.querySelector("#submitButton");
+
+    async function updateAvailableCopies() {
+        try {
+            let response = await fetch(`/admin/book-availability/${bookId}`);
+            let data = await response.json();
+            availableCopiesElement.textContent = data.available;
+
+            if (data.available > 0) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+                alert("No copies available for lending!");
+            }
+        } catch (error) {
+            console.error("Error fetching live availability:", error);
+        }
+    }
+
+    setInterval(updateAvailableCopies, 5000); // Check availability every 5 seconds
+    updateAvailableCopies(); // Initial check
+
+    document.querySelector("form").addEventListener("submit", async function (event) {
+        await updateAvailableCopies();
+        if (submitButton.disabled) {
+            event.preventDefault();
+        }
+    });
+</script>
+</body>
+</html>

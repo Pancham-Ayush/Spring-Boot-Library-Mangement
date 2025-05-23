@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Confirm Lending</title>
+    <style>
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ff7eb3, #ff4b2b, #4b79a1, #283e51);
+            background-size: 400% 400%;
+            animation: gradientMove 8s ease infinite;
+            color: white;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        h2 {
+            text-align: center;
+            color: white;
+        }
+
+        .home-icon {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            text-decoration: none;
+            color: white;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        input {
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #ff4b2b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ff7eb3;
+        }
+
+        .cancel-link {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            color: white;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* Ensure spans inside p have white color */
+        p > span {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+<a href="/admin" class="home-icon">&#8962;</a>
+<div class="container">
+    <h2>Confirm Lending</h2>
+    <p><strong>Book Id:</strong> <span th:text="${book.id}"></span></p>
+    <p><strong>Book Title:</strong> <span th:text="${book.title}"></span></p>
+    <p><strong>Author:</strong> <span th:text="${book.author}"></span></p>
+    <p><strong>Genre:</strong> <span th:text="${book.genre}"></span></p>
+    <p><strong>Description:</strong> <span th:text="${book.description}"></span></p>
+    <p><strong>Available Copies:</strong> <span id="availableCopies" th:text="${book.available}"></span></p>
+
+    <form th:action="@{/books/lendend}" method="post">
+        <input type="hidden" name="bookid" th:value="${record.bookid}">
+        <input type="hidden" name="bookName" th:value="${record.bookName}">
+        <input type="hidden" name="name" th:value="${record.name}">
+        <input type="hidden" name="email" th:value="${record.email}">
+        <input type="hidden" name="id" th:value="${record.id}">
+        <input type="hidden" name="phone" th:value="${record.phone}">
+
+        <label>Borrower's Name:</label>
+        <p><span th:text="${record.name}"></span></p>
+
+        <label>Borrower's Phone:</label>
+        <p><span th:text="${record.phone}"></span></p>
+
+        <label>Borrower's Email:</label>
+        <p><span th:text="${record.email}"></span></p>
+
+        <label for="returnDate">Returning Date:</label>
+        <input type="date" id="returnDate" name="returnDate" required>
+
+        <button type="submit" id="submitButton">Confirm Lend</button>
+    </form>
+
+    <a href="/books" class="cancel-link">Cancel</a>
+</div>
+
+<script>
+    let today = new Date();
+    let maxDate = new Date();
+    maxDate.setMonth(today.getMonth() + 1);
+
+    let todayStr = today.toISOString().split("T")[0];
+    let maxDateStr = maxDate.toISOString().split("T")[0];
+
+    let dateInput = document.getElementById("returnDate");
+    dateInput.setAttribute("min", todayStr);
+    dateInput.setAttribute("max", maxDateStr);
+
+    let bookId = document.querySelector("input[name='bookid']").value;
+    let availableCopiesElement = document.querySelector("#availableCopies");
+    let submitButton = document.querySelector("#submitButton");
+
+    async function updateAvailableCopies() {
+        try {
+            let response = await fetch(`/books/book-availability/${bookId}`);
+            let data = await response.json();
+            availableCopiesElement.textContent = data.available;
+
+            if (data.available > 0) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+                alert("No copies available for lending!");
+            }
+        } catch (error) {
+            console.error("Error fetching live availability:", error);
+        }
+    }
+
+    setInterval(updateAvailableCopies, 5000);
+    updateAvailableCopies();
+
+    document.querySelector("form").addEventListener("submit", async function (event) {
+        await updateAvailableCopies();
+        if (submitButton.disabled) {
+            event.preventDefault();
+        }
+    });
+</script>
+</body>
+
+</html>

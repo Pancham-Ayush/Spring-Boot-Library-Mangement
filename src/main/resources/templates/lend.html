@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lend a Book</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            background: linear-gradient(135deg, #efdb06, #ff4b2b, #4b79a1, #283e51);
+            background-size: 400% 400%;
+            animation: gradientMove 8s ease infinite;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .glass-form {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            margin: 80px auto;
+            color: white;
+        }
+
+        .glass-form input,
+        .glass-form button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .glass-form input {
+            background: rgba(255, 255, 255, 0.3);
+            color: #000;
+        }
+
+        .glass-form button {
+            background-color: #1e40af; /* Tailwind's blue-900 */
+            color: white;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .glass-form button:hover {
+            background-color: #1d4ed8; /* Tailwind's blue-700 */
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center">
+
+<div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl shadow-xl p-8 w-full max-w-md text-white -mt-16">
+    <h2 class="text-3xl font-bold mb-4 text-center">📖 Lend a Book</h2>
+    <p class="text-center mb-6 text-lg">Enter Details of Book</p>
+
+    <form action="/books/get" method="post" class="flex">
+        <input type="text" name="search" placeholder="Search books..."
+               class="flex-grow px-4 py-3 rounded-l-xl bg-white bg-opacity-80 text-black focus:outline-none placeholder-gray-600 font-medium" />
+        <button type="submit"
+                class="px-5 py-3 bg-blue-900 hover:bg-blue-700 rounded-r-xl text-white font-bold transition duration-300">
+            🔍
+        </button>
+    </form>
+</div>
+
+</body>
+</html>

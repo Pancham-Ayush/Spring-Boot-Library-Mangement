@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Remove number input spinner */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield; /* Firefox */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+
+<div class="bg-white p-6 rounded-lg shadow-lg w-96">
+    <h2 class="text-xl font-bold text-gray-700 text-center">Enter OTP</h2>
+
+    <p id="timer" class="text-red-600 text-center font-semibold mt-2">03:00</p>
+
+    <form th:action="@{/admin/editotp}" method="post" class="mt-4">
+        <div class="mb-4">
+            <label class="block text-gray-600">OTP</label>
+            <input type="text" id="otpInput" name="otp" inputmode="numeric" pattern="\d*" required
+                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+            Verify OTP
+        </button>
+    </form>
+</div>
+
+<script>
+    let timeLeft = 180; // 3 minutes (in seconds)
+    const timerDisplay = document.getElementById("timer");
+    const otpInput = document.getElementById("otpInput");
+    const submitBtn = document.getElementById("submitBtn");
+
+    function updateTimer() {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        timerDisplay.textContent =
+            (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+
+        if (timeLeft === 0) {
+            otpInput.disabled = true;
+            submitBtn.disabled = true;
+            timerDisplay.textContent = "Time expired!";
+            timerDisplay.classList.add("text-gray-500");
+            setTimeout(() => {
+                window.location.href = "/logout"; // Redirect after timeout
+            }, 1000);
+        } else {
+            timeLeft--;
+            setTimeout(updateTimer, 1000);
+        }
+    }
+
+    updateTimer();
+</script>
+
+</body>
+</html>

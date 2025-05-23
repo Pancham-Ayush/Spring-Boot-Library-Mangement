@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Edit Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    body {
+      background: linear-gradient(135deg, #efdb06, #ff4b2b, #4b79a1, #283e51);
+      background-size: 400% 400%;
+      animation: gradientMove 8s ease infinite;
+      font-family: 'Rajdhani', sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .glass-form {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-radius: 12px;
+      padding: 2rem;
+      width: 24rem; /* 384px */
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      color: #1f2937; /* Tailwind gray-700 */
+    }
+
+    label {
+      color: #4b5563; /* Tailwind gray-600 */
+    }
+
+    input {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #d1d5db; /* Tailwind gray-300 */
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      outline: none;
+      transition: box-shadow 0.3s ease;
+    }
+
+    input:focus {
+      box-shadow: 0 0 0 2px #3b82f6; /* Tailwind blue-500 ring */
+      border-color: #3b82f6;
+    }
+
+    button {
+      width: 100%;
+      background-color: #2563eb; /* Tailwind blue-600 */
+      color: white;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      margin-top: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      border: none;
+    }
+
+    button:hover {
+      background-color: #1d4ed8; /* Tailwind blue-700 */
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="glass-form">
+  <h2 class="text-xl font-bold text-center mb-4">Enter Password</h2>
+
+  <form th:action="@{/books/edit}" method="post">
+    <div class="mb-4">
+      <label for="pass" class="block mb-1">Password</label>
+      <input type="password" id="pass" name="pass" required />
+    </div>
+
+    <button type="submit">Proceed</button>
+  </form>
+</div>
+
+</body>
+</html>

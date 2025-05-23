@@ -7,9 +7,11 @@ package com.example.Book.Store.Controller;
 import com.example.Book.Store.EmailService;
 import com.example.Book.Store.Model.UserDetails;
 import com.example.Book.Store.Services.UserService;
+import com.example.Book.Store.UserLoginConfig.SecurityConfig;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
 import com.example.Book.Store.Model.Book;
 import com.example.Book.Store.Model.LendingRecord;
@@ -19,11 +21,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Controller
 @RequestMapping("books")
 public class BookController {
+    @Autowired
+    SecurityConfig securityConfig;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     EmailService emailService;
     @Autowired
@@ -41,7 +48,6 @@ public class BookController {
             org.springframework.security.core.userdetails.UserDetails securityUser =
                     (org.springframework.security.core.userdetails.UserDetails) authentication.getPrincipal();
 
-            // Fetch user details from the database using the phone number (assuming phone is the username)
             Optional<com.example.Book.Store.Model.UserDetails> userOpt =
                     userService.getUserDetails(Long.parseLong(securityUser.getUsername()));
 
@@ -52,7 +58,6 @@ public class BookController {
             }
         }
 
-        // Ensure `loggedInUser` is always available to prevent Thymeleaf errors
         if (!model.containsAttribute("loggedInUser")) {
             model.addAttribute("loggedInUser", new com.example.Book.Store.Model.UserDetails());
         }
@@ -78,8 +83,7 @@ public class BookController {
                 bookImages.put(book.getId(), "noimage");
             }
         }
-//        AiController aiController = new AiController();
-//        System.out.println(aiController.gemini("hii i am java"));
+
         model.addAttribute("books", allBooks);
         model.addAttribute("bookImages", bookImages);
         return "all";
@@ -113,7 +117,9 @@ public class BookController {
     @GetMapping("/lend")
     public String lendBookForm(Model model) {
         return "lend";
+
     }
+
     @PostMapping("/lend")
     public String processLend(@RequestParam("bookid") Long bookId, Model model,HttpSession httpSession) {
         UserDetails loggedInUser = (UserDetails) httpSession.getAttribute("loggedInUser");
@@ -139,7 +145,7 @@ public class BookController {
     public String processLendend(@ModelAttribute("record")LendingRecord lendingRecord, Model model){
         Optional<Book> book = bookServices.findById(lendingRecord.getBookid());
         book.get().setAvailable(book.get().getAvailable()-1);
-
+        lendingRecord.setDate(new Date());
         bookServices.update(book.get());
         ledgerService.add(lendingRecord);
         model.addAttribute("lendingrecord",lendingRecord);
@@ -186,6 +192,13 @@ public class BookController {
         }
         return availabilityList;
     }
+    @GetMapping("/takenbooks")
+    public String takenBooks(Model model,HttpSession httpSession) {
+        UserDetails loggedInUser = (UserDetails) httpSession.getAttribute("loggedInUser");
+        List<LendingRecord> taken = ledgerService.findByPhone(loggedInUser.getPhone());
+        model.addAttribute("taken", taken);
+        return "takenbooks";
+    }
     @GetMapping("/returnlist")
     public String returnBookList(Model model, HttpSession httpSession) {
         UserDetails loggedInUser = (UserDetails) httpSession.getAttribute("loggedInUser");
@@ -195,7 +208,120 @@ public class BookController {
 
         return "lenduser";
     }
+    @GetMapping("/edit")
+    public String editForm(Model model) {
+        return "useredit";
+    }
+    @PostMapping("/edit")
+    public String editProcess(@RequestParam("pass")String pass,HttpSession httpSession, Model model) {
+        UserDetails userd=(UserDetails)httpSession.getAttribute("loggedInUser");
+        if (passwordEncoder.matches(pass, userd.getPassword())) {
+            int otp = emailService.otp();
+            httpSession.setAttribute("otp", otp);
+            emailService.sendEmail(userd.getEmail(), "Your OTP Code",
+                    "Dear User,\n\n"
+                            + "Your One-Time Password (OTP) is: " + otp + "\n\n"
+                            + "Please use this code to complete your verification. The OTP is valid for a limited time only.\n\n"
+                            + "If you did not request this, please ignore this email.\n\n"
+                            + "Best regards,\n"
+                            + "Reva Library Team\n"
+                            + "------------------------------\n"
+                            + "This is an automated message. Please do not reply.");
 
+            return "usereditotpform";
+        }
+
+        return "redirect:/books";
+    }
+    @PostMapping("/editotp")
+    public String verifyotpedit(Model model,@RequestParam("otp")int Otp,HttpSession httpSession,@SessionAttribute(value = "otp", required = false) int otp) {
+        if(Otp==otp){
+            System.out.println("otp verified");
+            UserDetails userDetails = (UserDetails) httpSession.getAttribute("loggedInUser");
+            model.addAttribute("user", userDetails);
+            return "usereditform";
+        }
+        return "redirect:/books";
+
+    }
+    @PostMapping("/editchanges")
+    public String editchanges(Model model, HttpSession httpSession, @ModelAttribute("user") UserDetails userDetails) {
+        System.out.println("Received User: " + userDetails);  // Debugging
+
+
+        UserDetails existingUser = (UserDetails) httpSession.getAttribute("loggedInUser");
+        existingUser.setName(userDetails.getName());
+        existingUser.setEmail(userDetails.getEmail());
+
+
+        httpSession.setAttribute("changes", existingUser);
+        httpSession.removeAttribute("otp");
+
+        model.addAttribute("user", userDetails);
+        return "usereditchanges";
+    }
+
+    @PostMapping("/editfinal")
+    public String editfinal(Model model,HttpSession httpSession) {
+        UserDetails userDetails = (UserDetails) httpSession.getAttribute("changes");
+        httpSession.removeAttribute("changes");
+        userService.update(userDetails);
+        return "usercahngessaved";
+    }
+    @PostMapping("/finalpass")
+    public String finalpass(Model model, HttpSession httpSession,@RequestParam("pass")String pass) {
+        UserDetails user = (UserDetails) httpSession.getAttribute("user");
+        user.setPassword(securityConfig.passwordEncoder().encode(pass));
+        userService.update(user);
+        httpSession.invalidate();
+        return "redirect:/login";
+    }
+    @GetMapping("/reset")
+    public String resetpass(Model model) {
+        return "restpass";
+    }
+
+    @PostMapping("/resetpass")
+    public String resetpass(@RequestParam("phone") Long phone, Model model, HttpSession httpSession) {
+        int otp = emailService.otp();  // Generate OTP
+        var user = userService.getUserDetails(phone);
+
+        if (user.isPresent()) {
+            emailService.sendEmail(user.get().getEmail(), "Reset Password ",
+                    "Dear User,\n\n"
+                            + "Your One-Time Password (OTP) is: " + otp + "\n\n"
+                            + "Please use this code to Reset Password The OTP is valid for a limited time only.\n\n"
+                            + "If you did not request this, please ignore this email.\n\n"
+                            + "Best regards,\n"
+                            + "Reva Library Team\n"
+                            + "------------------------------\n"
+                            + "This is an automated message. Please do not reply.");
+            httpSession.setAttribute("otp", otp);  // ✅ Store OTP in session
+            httpSession.setAttribute("user", user.get()); // ✅ Store user in session
+
+            return "password";  // Go to password entry page
+        }
+        return "redirect:/login";  // Redirect if user not found
+    }
+
+    @PostMapping("/verifyotp")
+    public String verifyotp(@RequestParam("enteredotp") int enteredotp, HttpSession httpSession, Model model) {
+        Integer otp = (Integer) httpSession.getAttribute("otp");  // Retrieve OTP
+
+        if (otp == null) {
+            model.addAttribute("error", "Session expired. Please try again.");
+            return "redirect:/reset";
+        }
+
+        System.out.println("Entered OTP: " + enteredotp + " | Stored OTP: " + otp);
+
+        if (otp.equals(enteredotp)) {
+            return "verifyotp";
+        }
+
+        model.addAttribute("error", "Invalid OTP. Try again.");
+        return "password";  // Return to OTP entry page
+    }
 
 }
 

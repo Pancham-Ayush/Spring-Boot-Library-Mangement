@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Returned Books</title>
+  <link rel="stylesheet" href="/css/styles.css"> <!-- Link to your CSS file -->
+</head>
+<body>
+
+<h2>Returned Books List</h2>
+
+<table border="1">
+  <thead>
+  <tr>
+    <th>Book Name</th>
+    <th>Borrower Name</th>
+    <th>Email</th>
+    <th>Phone</th>
+    <th>Lending Date</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="record : ${returnedBooks}">
+    <td th:text="${record.bookName}"></td>
+    <td th:text="${record.name}"></td>
+    <td th:text="${record.email}"></td>
+    <td th:text="${record.phone}"></td>
+    <td th:text="${#dates.format(record.date, 'yyyy-MM-dd')}"></td>
+  </tr>
+  </tbody>
+</table>
+
+<!-- If no records found, show message -->
+<p th:if="${returnedBooks.isEmpty()}">No books have been returned yet.</p>
+
+<br>
+<a href="/dashboard">Back to Dashboard</a> <!-- Change link as per your routing -->
+
+</body>
+</html>

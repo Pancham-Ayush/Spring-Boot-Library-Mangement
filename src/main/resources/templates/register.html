@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anant Pustakalaya - Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi&family=Mukta:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* Rotating Background */
+        @keyframes rotateBg {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        /* Hindi-Style English Text */
+        .hindi-text {
+            font-size: 50px;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+            font-family: 'Tiro Devanagari Hindi', serif;
+            letter-spacing: 4px;
+            color: white;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 2s ease-out;
+        }
+
+        /* Fade-in effect */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Floating label effect */
+        .floating-label {
+            position: relative;
+        }
+
+        .floating-label input,
+        .floating-label select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .floating-label label {
+            position: absolute;
+            left: 10px;
+            top: 12px;
+            color: #aaa;
+            transition: 0.3s ease all;
+            pointer-events: none;
+        }
+
+        .floating-label input:focus + label,
+        .floating-label select:focus + label,
+        .floating-label input:not(:placeholder-shown) + label,
+        .floating-label select:not(:placeholder-shown) + label {
+            top: -12px;
+            left: 5px;
+            font-size: 12px;
+            color: #4F46E5;
+            background: white;
+            padding: 0 5px;
+        }
+    </style>
+</head>
+<body class="flex flex-col justify-center items-center min-h-screen bg-gradient-to-r from-purple-500 to-blue-500 animate-[rotateBg_8s_linear_infinite]">
+
+<!-- Hindi-Style English Text -->
+<div class="hindi-text">Anant Pustakalaya</div>
+
+<div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md relative">
+    <!-- X Button for Closing -->
+    <a href="/login" class="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-2xl font-bold">&times;</a>
+
+    <h2 class="text-3xl font-bold text-center text-gray-700 mb-6">Registration Form</h2>
+
+    <form th:action="@{/approval}" th:object="${user}" method="post" class="space-y-6">
+        <div class="floating-label">
+            <input type="text" id="name" name="name" placeholder=" " required>
+            <label for="name">Name</label>
+        </div>
+
+        <div class="floating-label">
+            <input type="email" id="email" name="email" placeholder=" " required>
+            <label for="email">Email</label>
+        </div>
+
+        <div class="floating-label">
+            <input type="text" id="phone" name="phone" placeholder=" " required>
+            <label for="phone">Contact</label>
+        </div>
+
+        <div class="floating-label">
+            <input type="password" id="password" name="password" placeholder=" " required>
+            <label for="password">Password</label>
+        </div>
+
+        <div class="floating-label">
+            <select id="role" name="role" required>
+                <option value="USER" selected>User</option>
+                <option value="ADMIN">Admin</option>
+            </select>
+            <label for="role">Role</label>
+        </div>
+
+        <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-800">
+            Register
+        </button>
+    </form>
+</div>
+
+</body>
+</html>

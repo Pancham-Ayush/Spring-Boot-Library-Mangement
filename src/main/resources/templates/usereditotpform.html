@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Verify OTP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Remove number input spinner */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            background: linear-gradient(135deg, #efdb06, #ff4b2b, #4b79a1, #283e51);
+            background-size: 400% 400%;
+            animation: gradientMove 8s ease infinite;
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .glass-form {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 24rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            color: #1f2937; /* Tailwind gray-700 */
+        }
+
+        label {
+            color: #4b5563; /* Tailwind gray-600 */
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db; /* Tailwind gray-300 */
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            outline: none;
+            transition: box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            box-shadow: 0 0 0 2px #3b82f6; /* Tailwind blue-500 ring */
+            border-color: #3b82f6;
+        }
+
+        button {
+            width: 100%;
+            background-color: #2563eb; /* Tailwind blue-600 */
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            margin-top: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #1d4ed8; /* Tailwind blue-700 */
+        }
+
+        button:disabled {
+            background-color: #93c5fd; /* lighter blue */
+            cursor: not-allowed;
+        }
+
+        #timer {
+            color: #dc2626; /* Tailwind red-600 */
+            font-weight: 600;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        #timer.expired {
+            color: #6b7280; /* Tailwind gray-500 */
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="glass-form">
+    <h2 class="text-xl font-bold text-center mb-4">Enter OTP</h2>
+
+    <p id="timer">03:00</p>
+
+    <form th:action="@{/books/editotp}" method="post" class="mt-4">
+        <div class="mb-4">
+            <label for="otpInput" class="block mb-1">OTP</label>
+            <input
+                    type="text"
+                    id="otpInput"
+                    name="otp"
+                    inputmode="numeric"
+                    pattern="\d*"
+                    required
+                    autocomplete="one-time-code"
+                    maxlength="6"
+                    class=""
+            />
+        </div>
+        <button type="submit" id="submitBtn">Verify OTP</button>
+    </form>
+</div>
+
+<script>
+    let timeLeft = 180; // 3 minutes
+    const timerDisplay = document.getElementById("timer");
+    const otpInput = document.getElementById("otpInput");
+    const submitBtn = document.getElementById("submitBtn");
+
+    function updateTimer() {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        timerDisplay.textContent =
+            (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+
+        if (timeLeft === 0) {
+            otpInput.disabled = true;
+            submitBtn.disabled = true;
+            timerDisplay.textContent = "Time expired!";
+            timerDisplay.classList.add("expired");
+            setTimeout(() => {
+                window.location.href = "/logout"; // Redirect after timeout
+            }, 1000);
+        } else {
+            timeLeft--;
+            setTimeout(updateTimer, 1000);
+        }
+    }
+
+    updateTimer();
+</script>
+
+</body>
+</html>

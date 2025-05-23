@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap" rel="stylesheet">
+    <style>
+        /* Background Animation */
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            background: linear-gradient(-45deg, #ff416c, #ff4b2b, #4b79a1, #2a5298);
+            background-size: 400% 400%;
+            animation: gradientMove 8s ease infinite;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        /* Card Animation */
+        .glassmorphic-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Input Field Effects */
+        input {
+            transition: all 0.3s ease-in-out;
+        }
+
+        input:focus {
+            transform: scale(1.05);
+            border-color: #ff416c;
+            box-shadow: 0 0 10px rgba(255, 65, 108, 0.5);
+        }
+
+        /* Button Hover */
+        .btn-hover:hover {
+            transform: scale(1.1);
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(255, 65, 108, 0.8);
+        }
+
+        /* Floating Eye Icon */
+        .eye-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .eye-icon:hover {
+            color: #ff416c;
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen">
+
+<!-- Glassmorphic Login Form -->
+<div class="glassmorphic-card w-full max-w-md p-8 rounded-lg shadow-lg text-white">
+    <h2 class="text-3xl font-bold text-center">Login</h2>
+
+    <form th:action="@{/login}" method="post" class="mt-6 space-y-6">
+        <div class="relative">
+            <label class="block text-white">Username</label>
+            <input type="text" name="phone" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-gray-900">
+        </div>
+
+        <div class="relative">
+            <label class="block text-white">Password</label>
+            <input type="password" id="password" name="password" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-gray-900">
+            <i class="fas fa-eye eye-icon" id="togglePassword"></i>
+        </div>
+
+        <button type="submit" class="w-full bg-pink-600 text-white py-3 rounded-lg font-bold btn-hover transition-all">
+            Login
+        </button>
+
+
+
+    <p class="mt-4 text-sm text-center">
+        <a th:href="@{/reset}" class="text-white hover:underline">Forgot Password?</a>
+    </p>
+
+    <p class="mt-4 text-sm text-center">
+        Don't have an account?
+        <a th:href="@{/register}" class="text-white hover:underline">Register here</a>
+    </p>
+</div>
+
+<script>
+    // Password toggle functionality
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        let passwordField = document.getElementById('password');
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            this.classList.remove('fa-eye');
+            this.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = "password";
+            this.classList.remove('fa-eye-slash');
+            this.classList.add('fa-eye');
+        }
+    });
+</script>
+
+</body>
+</html>

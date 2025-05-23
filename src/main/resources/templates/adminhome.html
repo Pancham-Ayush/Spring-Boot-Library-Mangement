@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            background: linear-gradient(135deg, #efdb06, #ff4b2b, #4b79a1, #283e51);
+            background-size: 400% 400%;
+            animation: gradientMove 8s ease infinite;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .glass-navbar {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 30px;
+            border-radius: 15px;
+        }
+
+        .dropdown, .notification-dropdown {
+            display: none;
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 220px;
+            right: 0;
+            z-index: 10;
+        }
+
+        .dropdown.active, .notification-dropdown.active {
+            display: block;
+        }
+
+        .icon-btn {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-weight: bold;
+            border-radius: 10px;
+            box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.3s, background 0.3s;
+            font-size: 1.2rem;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+
+<!-- Navbar -->
+<div class="glass-navbar flex justify-between items-center p-4 text-white">
+    <!-- Centered Library Title -->
+    <h1 class="text-white text-5xl font-extrabold mx-auto">♾️ Anant Pustakalaya</h1>
+
+    <!-- Profile and Notifications (Aligned Right) -->
+    <div class="flex items-center gap-6 absolute right-8 top-4">
+        <!-- Notifications -->
+        <div class="relative">
+            <span class="icon-btn" id="mailIcon">&#128231;</span>
+            <span class="bg-red-500 text-white text-xs font-bold rounded-full px-2"
+                  th:if="${#lists.size(approval) > 0}" th:text="${#lists.size(approval)}"></span>
+            <div class="notification-dropdown absolute top-12 right-0 p-4">
+                <h4 class="font-bold">Pending Approvals</h4>
+                <ul>
+                    <li th:each="user : ${approval}" class="py-1">
+                        <span th:text="${user.name}"></span>
+                    </li>
+                </ul>
+                <a href="/admin/approval" class="block text-center text-blue-400 mt-2">View All</a>
+            </div>
+        </div>
+
+        <!-- Profile -->
+        <div class="relative">
+            <img src="https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png"
+                 class="w-10 h-10 rounded-full cursor-pointer" id="profileIcon">
+            <div class="dropdown absolute top-12 right-0 p-4">
+                <p class="font-bold" th:text="${loggedInUser.name}"></p>
+                <p th:text="${loggedInUser.email}"></p>
+                <p th:text="${loggedInUser.phone}"></p>
+                <a href="/admin/edit" class="block text-blue-400 mt-2">Edit Profile</a>
+                <a href="/logout" class="block text-red-400 mt-2">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Search Box -->
+<div class="text-center mt-6">
+    <form action="/admin/get" method="post" class="inline-flex">
+        <input type="text" name="search" placeholder="Search books..." class="px-4 py-2 rounded-l-lg border-none focus:outline-none w-64">
+        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600">🔍</button>
+    </form>
+</div>
+
+<!-- Admin Welcome Section -->
+<div class="text-center mt-12">
+    <h1 class="text-white text-4xl font-bold">Welcome, Admin<br> <span th:text="${loggedInUser.name}"></span></h1>
+    <p class="text-white mt-2">Manage books and lending records efficiently.</p>
+</div>
+
+<!-- Admin Quick Actions -->
+<div class="grid-container mt-8">
+    <a href="/admin/add" class="action-btn">📖 Add Book</a>
+    <a href="/admin/update" class="action-btn">✏️ Update Book</a>
+    <a href="/admin/delete" class="action-btn">🗑️ Delete Book</a>
+    <a href="/admin/all" class="action-btn">📚 View All Books</a>
+    <a href="/admin/lendlist" class="action-btn">📜 Lending Records</a>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const mailIcon = document.getElementById("mailIcon");
+        const profileIcon = document.getElementById("profileIcon");
+        const mailDropdown = document.querySelector(".notification-dropdown");
+        const profileDropdown = document.querySelector(".dropdown");
+
+        mailIcon.addEventListener("click", function(event) {
+            event.stopPropagation();
+            mailDropdown.classList.toggle("active");
+            profileDropdown.classList.remove("active");
+        });
+
+        profileIcon.addEventListener("click", function(event) {
+            event.stopPropagation();
+            profileDropdown.classList.toggle("active");
+            mailDropdown.classList.remove("active");
+        });
+
+        // Close dropdown when moving the mouse out
+        profileDropdown.addEventListener("mouseleave", function() {
+            profileDropdown.classList.remove("active");
+        });
+
+        mailDropdown.addEventListener("mouseleave", function() {
+            mailDropdown.classList.remove("active");
+        });
+
+        // Hide dropdowns when clicking outside
+        document.addEventListener("click", function(event) {
+            if (!profileDropdown.contains(event.target) && !profileIcon.contains(event.target)) {
+                profileDropdown.classList.remove("active");
+            }
+            if (!mailDropdown.contains(event.target) && !mailIcon.contains(event.target)) {
+                mailDropdown.classList.remove("active");
+            }
+        });
+    });
+
+</script>
+
+</body>
+</html>

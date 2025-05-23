@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Changes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            background: linear-gradient(135deg, #efdb06, #ff4b2b, #4b79a1, #283e51);
+            background-size: 400% 400%;
+            animation: gradientMove 8s ease infinite;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            color: white;
+        }
+
+        .action-buttons button {
+            background-color: #1e40af;
+            transition: background 0.3s ease;
+        }
+
+        .action-buttons button:hover {
+            background-color: #1d4ed8;
+        }
+
+        .cancel-btn {
+            background-color: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen">
+
+<div class="glass-card text-center">
+    <h2 class="text-2xl font-bold mb-4">Confirm Changes</h2>
+
+    <p class="mb-2"><strong>Username:</strong> <span th:text="${user.name}"></span></p>
+    <p class="mb-2"><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+    <p class="mb-6"><strong>Phone:</strong> <span th:text="${user.phone}"></span></p>
+
+    <div class="action-buttons space-y-3">
+        <form th:action="@{/books/editfinal}" method="post">
+            <button type="submit" class="w-full text-white py-2 rounded-lg font-semibold">
+                ✅ Confirm & Save
+            </button>
+        </form>
+        <a href="/books" class="block w-full text-center py-2 rounded-lg font-semibold cancel-btn">
+            ❌ Cancel
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

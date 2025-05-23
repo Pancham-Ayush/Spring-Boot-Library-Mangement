@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Changes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            background: linear-gradient(135deg, #efdb06, #ff4b2b, #4b79a1, #283e51);
+            background-size: 400% 400%;
+            animation: gradientMove 8s ease infinite;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            color: white;
+        }
+
+        .action-buttons button {
+            background-color: #1e40af;
+            transition: background 0.3s ease;
+        }
+
+        .action-buttons button:hover {
+            background-color: #1d4ed8;
+        }
+
+        .cancel-btn {
+            background-color: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+
+<div class="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
+    <h2 class="text-xl font-bold text-gray-700">Changes Saved Successfully!</h2>
+    <p class="mt-2 text-gray-600">Your profile has been updated.</p>
+
+    <a href="/books" class="mt-4 inline-block bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
+        Go to Dashboard
+    </a>
+</div>
+
+</body>
+</html>

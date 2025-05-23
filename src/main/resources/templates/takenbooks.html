@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Taken Books</title>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            background: linear-gradient(135deg, #efdb06, #ff4b2b, #4b79a1, #283e51);
+            background-size: 400% 400%;
+            animation: gradientMove 8s ease infinite;
+            font-family: 'Rajdhani', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .glass-table {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .back-button {
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start text-white pt-10 px-4">
+
+<!-- Title -->
+<div class="w-full max-w-6xl">
+    <h2 class="text-4xl font-bold mb-4">📚 Books You Have Taken</h2>
+
+    <!-- Back Button (left-aligned) -->
+    <a th:href="@{/books}" class="back-button mb-4 inline-block">← Back to Home</a>
+
+    <!-- Table -->
+    <div class="glass-table overflow-auto">
+        <table class="min-w-full text-left text-white">
+            <thead>
+            <tr class="border-b border-white/30">
+                <th class="p-4">Book Name</th>
+                <th class="p-4">Book ID</th>
+                <th class="p-4">Issue Date</th>
+                <th class="p-4">Returning Date</th>
+                <th class="p-4">User Name</th>
+                <th class="p-4">Email</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="record : ${taken}" class="border-t border-white/10 hover:bg-white/10">
+                <td class="p-4" th:text="${record.bookName}">Book Name</td>
+                <td class="p-4" th:text="${record.bookid}">Book ID</td>
+                <td class="p-4" th:text="${#dates.format(record.date, 'yyyy-MM-dd')}">Issue Date</td>
+                <td class="p-4" th:text="${#dates.format(record.returnDate, 'yyyy-MM-dd')}">Return Date</td>
+                <td class="p-4" th:text="${record.name}">Name</td>
+                <td class="p-4" th:text="${record.email}">Email</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

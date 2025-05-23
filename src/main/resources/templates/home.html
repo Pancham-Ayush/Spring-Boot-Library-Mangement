@@ -58,23 +58,30 @@
 </head>
 <body>
 
-<div class="glass-navbar flex justify-between items-center p-4 text-white">
+<!-- Navbar -->
+<div class="glass-navbar flex justify-between items-center p-4 text-white relative">
   <h1 class="text-white text-5xl font-extrabold mx-auto">♾️ Anant Pustakalaya</h1>
-  <div class="flex items-center gap-6 absolute right-8 top-4">
+  <div class="absolute right-8 top-4">
     <div class="relative">
       <img src="https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png"
            class="w-10 h-10 rounded-full cursor-pointer" id="profileIcon">
-      <div class="dropdown absolute top-12 right-0 p-4">
-        <p class="font-bold" th:text="${loggedInUser.name}"></p>
-        <p th:text="${loggedInUser.email}"></p>
-        <p th:text="${loggedInUser.phone}"></p>
-        <a href="/user/edit" class="block text-blue-400 mt-2">Edit Profile</a>
-        <a href="/logout" class="block text-red-400 mt-2">Logout</a>
+
+      <!-- Dropdown (hidden by default) -->
+      <div id="profileDropdown"
+           class="absolute top-12 right-0 p-4 w-64 text-white rounded-lg shadow-lg hidden z-50 break-words whitespace-normal overflow-hidden"
+           style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3);">
+        <p class="font-bold" th:text="${loggedInUser.name}">Name</p>
+        <p th:text="${loggedInUser.email}">email@example.com</p>
+        <p th:text="${loggedInUser.phone}">1234567890</p>
+        <a href="/books/edit" class="block text-blue-200 mt-2 hover:underline">Edit Profile</a>
+        <a href="/logout" class="block text-red-300 mt-2 hover:underline">Logout</a>
       </div>
+
     </div>
   </div>
 </div>
 
+<!-- Search -->
 <div class="text-center mt-6">
   <form action="/books/get" method="post" class="inline-flex">
     <input type="text" name="search" placeholder="Search books..." class="px-4 py-2 rounded-l-lg border-none focus:outline-none w-64">
@@ -82,28 +89,36 @@
   </form>
 </div>
 
+<!-- Welcome -->
 <div class="text-center mt-12">
-  <h1 class="text-white text-4xl font-bold">Welcome, <span th:text="${loggedInUser.name}"></span></h1>
+  <h1 class="text-white text-4xl font-bold">Welcome, <span th:text="${loggedInUser.name}">User</span></h1>
   <p class="text-white mt-2">Browse and borrow books easily.</p>
 </div>
 
+<!-- Action Buttons -->
 <div class="grid-container mt-8">
   <a href="/books/all" class="action-btn">📚 View All Books</a>
   <a href="/books/lend" class="action-btn">📖 Lend a Book</a>
+  <a href="/books/takenbooks" class="action-btn">📖 History</a>
 </div>
 
+<!-- Script for Profile Dropdown -->
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("DOMContentLoaded", function () {
     const profileIcon = document.getElementById("profileIcon");
-    const profileDropdown = document.querySelector(".dropdown");
+    const dropdown = document.getElementById("profileDropdown");
 
-    profileIcon.addEventListener("click", function(event) {
-      event.stopPropagation();
-      profileDropdown.classList.toggle("active");
+    // Toggle dropdown on click
+    profileIcon.addEventListener("click", function (e) {
+      e.stopPropagation(); // Prevent body click handler
+      dropdown.classList.toggle("hidden");
     });
 
-    profileDropdown.addEventListener("mouseleave", function() {
-      profileDropdown.classList.remove("active");
+    // Hide dropdown when clicking outside
+    document.addEventListener("click", function (e) {
+      if (!dropdown.contains(e.target) && !profileIcon.contains(e.target)) {
+        dropdown.classList.add("hidden");
+      }
     });
   });
 </script>
