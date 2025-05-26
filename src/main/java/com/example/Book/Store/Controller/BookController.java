@@ -55,6 +55,11 @@ public class BookController {
                 com.example.Book.Store.Model.UserDetails user = userOpt.get();
                 session.setAttribute("loggedInUser", user);
                 model.addAttribute("loggedInUser", user);
+                List<LendingRecord> lentBooks = ledgerService.findByPhone(user.getPhone());
+                model.addAttribute("lentBooks", lentBooks);
+            } else {
+                model.addAttribute("lentBooks", Collections.emptyList());
+
             }
         }
 
@@ -322,7 +327,24 @@ public class BookController {
         model.addAttribute("error", "Invalid OTP. Try again.");
         return "password";  // Return to OTP entry page
     }
+    @GetMapping("/chatbot")
+    public String chatbotPage(Model model, HttpSession session) {
+        UserDetails loggedInUser = (UserDetails) session.getAttribute("loggedInUser");
+        if (loggedInUser != null) {
+            List<LendingRecord> lentBooks = ledgerService.findByPhone(loggedInUser.getPhone());
+            model.addAttribute("lentBooks", lentBooks);
+        } else {
+            model.addAttribute("lentBooks", Collections.emptyList());
+        }
+        model.addAttribute("loggedInUser", loggedInUser);
+        return "chatbot";
+    }
+
+
+
+
 
 }
+
 
 

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Library Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f1f1;
+      margin: 0;
+    }
+
+    .chat-container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-window {
+      padding: 20px;
+      height: 400px;
+      overflow-y: auto;
+    }
+
+    .message {
+      margin: 10px 0;
+      display: flex;
+    }
+
+    .message.bot .bubble {
+      background: #e0e0e0;
+      color: #000;
+      align-self: flex-start;
+    }
+
+    .message.user {
+      justify-content: flex-end;
+    }
+
+    .message.user .bubble {
+      background: #005bea;
+      color: #fff;
+    }
+
+    .bubble {
+      padding: 10px 15px;
+      border-radius: 18px;
+      max-width: 80%;
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 15px;
+      border-top: 1px solid #ccc;
+    }
+
+    button {
+      padding: 8px 12px;
+      background: #005bea;
+      color: white;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0042a1;
+    }
+
+    .hidden-answers {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="chat-container">
+  <div id="chat" class="chat-window">
+    <div class="message bot">
+      <div class="bubble">Hello! How can I assist you today?</div>
+    </div>
+  </div>
+
+  <div class="options">
+    <button onclick="selectOption('profile')">Profile</button>
+    <button onclick="selectOption('about')">About</button>
+    <button onclick="selectOption('search')">Search</button>
+    <button onclick="selectOption('search-books')">Search Books</button>
+    <button onclick="selectOption('lent-books')">My Lent Books</button>
+    <button onclick="selectOption('contact')">Contact Address</button>
+    <button onclick="selectOption('renew')">Renew Book</button>
+  </div>
+</div>
+
+<!-- Pre-rendered Answers (via Thymeleaf) -->
+<div class="hidden-answers">
+  <div id="profile-name" th:text="'Your profile name is: ' + ${loggedInUser.name}">Your profile name is: John Doe</div>
+  <div id="profile-email" th:text="'Your email is: ' + ${loggedInUser.email}">Your email is: john@example.com</div>
+  <div id="about-company">We are Reva Library, dedicated to providing the best books.</div>
+  <div id="about-team">Our team consists of librarians and developers.</div>
+  <div id="search-users">Search users by phone number or email.</div>
+  <div id="search-docs">Search documents by title or author.</div>
+  <div id="contact">Address: Reva University, Bangalore, India.</div>
+  <div id="renew">Please visit the profile section to renew lent books.</div>
+  <div id="lent-books">
+    <ul>
+      <li th:each="book : ${lentBooks}" th:text="|${book.bookName} by ${book.name}|">Sample Book by Sample Author</li>
+      <li th:if="${#lists.isEmpty(lentBooks)}">You have not lent any books.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  const chat = document.getElementById("chat");
+
+  function appendMessage(sender, text) {
+    const msg = document.createElement("div");
+    msg.className = `message ${sender}`;
+    msg.innerHTML = `<div class="bubble">${text}</div>`;
+    chat.appendChild(msg);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function selectOption(option) {
+    appendMessage('user', option.replace('-', ' '));
+
+    if (['profile', 'about', 'search'].includes(option)) {
+      // Ask for sub-option
+      const subs = {
+        'profile': ['profile-name', 'profile-email'],
+        'about': ['about-company', 'about-team'],
+        'search': ['search-users', 'search-docs']
+      }[option];
+
+      setTimeout(() => {
+        appendMessage('bot', `Choose an option: ${subs.map(s => `<button onclick="selectOption('${s}')">${s.replace(option + '-', '').replace('-', ' ')}</button>`).join(' ')}`);
+      }, 500);
+      return;
+    }
+
+    if (option === 'search-books') {
+      window.location.href = "/books/get";
+      return;
+    }
+
+    const answerElement = document.getElementById(option);
+    if (answerElement) {
+      appendMessage('bot', answerElement.innerHTML);
+    } else {
+      appendMessage('bot', "Sorry, I didn't understand that.");
+    }
+  }
+</script>
+
+</body>
+</html>
