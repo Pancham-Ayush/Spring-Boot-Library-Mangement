@@ -2,6 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>User Home</title>
+    <!-- CHANGE [1]: Added the crucial viewport meta tag for proper mobile scaling. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CHANGE [2]: Added a link to a Web App Manifest for PWA capabilities (optional but recommended). -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0f2027"> <!-- Matches dark background -->
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 
@@ -13,16 +19,22 @@
         }
 
         body {
-            /* Enhanced background for a more dynamic/3D feel */
-            background: linear-gradient(135deg, #efdb06, #ff4b2b, #c93a2f, #4b79a1, #283e51, #1a2d3a, #0f2027, #203a43, #2c5364); /* Added more color stops for depth */
-            background-size: 800% 800%; /* Increased size for more expansive movement */
-            animation: gradientMove 20s ease infinite; /* Slower, more majestic animation */
-            font-family: 'Inter', 'Rajdhani', sans-serif; /* Added Inter for better readability, Rajdhani as fallback */
-            color: #E0E0E0; /* Default light text color for body */
+            background: linear-gradient(135deg, #efdb06, #ff4b2b, #c93a2f, #4b79a1, #283e51, #1a2d3a, #0f2027, #203a43, #2c5364);
+            background-size: 800% 800%;
+            animation: gradientMove 20s ease infinite;
+            font-family: 'Inter', 'Rajdhani', sans-serif;
+            color: #E0E0E0;
+        }
+
+        /* CHANGE [3]: Added media query to respect user's preference for reduced motion. Good for accessibility and mobile battery life. */
+        @media (prefers-reduced-motion: reduce) {
+            body {
+                animation: none;
+            }
         }
 
         .glass-navbar {
-            background: rgba(255, 255, 255, 0.1); /* Slightly more subtle */
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
@@ -36,33 +48,21 @@
         }
 
         .action-btn:hover {
-            transform: translateY(-3px) scale(1.03); /* More engaging hover */
+            transform: translateY(-3px) scale(1.03);
             background: rgba(255, 255, 255, 0.25);
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
         }
 
-        #chatMessages::-webkit-scrollbar {
-            width: 8px;
-        }
-        #chatMessages::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-        }
-        #chatMessages::-webkit-scrollbar-thumb {
-            background-color: rgba(30, 136, 229, 0.6); /* A nice blue from sky-600 */
-            border-radius: 10px;
-            border: 2px solid transparent;
-            background-clip: content-box;
-        }
-        #chatMessages::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(30, 136, 229, 0.8);
-        }
+        #chatMessages::-webkit-scrollbar { width: 8px; }
+        #chatMessages::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        #chatMessages::-webkit-scrollbar-thumb { background-color: rgba(30, 136, 229, 0.6); border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
+        #chatMessages::-webkit-scrollbar-thumb:hover { background-color: rgba(30, 136, 229, 0.8); }
 
-        /* Corrected CSS Rule for .chat-option-btn */
         .chat-option-btn {
             background-color: #0ea5e9; /* sky-500 */
             color: white;
-            padding: 8px 14px;
+            /* CHANGE [4]: Increased padding slightly for a larger, more friendly touch target on mobile. */
+            padding: 10px 16px;
             border-radius: 0.5rem; /* rounded-lg */
             font-size: 0.875rem;
             font-weight: 500; /* medium */
@@ -82,30 +82,19 @@
             gap: 8px;
             margin-top: 10px;
             margin-bottom: 10px;
-            justify-content: flex-start; /* Align options to the left for bot */
+            justify-content: flex-start;
         }
 
-        /* Profile Dropdown text visibility fix */
         #profileDropdown {
             background: rgba(30, 41, 59, 0.85); /* Darker, more opaque glass: bg-slate-800 like */
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        #profileDropdown p, #profileDropdown a {
-            color: #cbd5e1; /* slate-300 */
-        }
-        #profileDropdown .font-bold {
-            color: #f1f5f9; /* slate-100 */
-        }
-        #profileDropdown a:hover {
-            color: #7dd3fc; /* sky-300 */
-        }
-        #profileDropdown a.text-red-300 { /* Specific for logout */
-            color: #fda4af; /* rose-300 */
-        }
-        #profileDropdown a.text-red-300:hover {
-            color: #fb7185; /* rose-400 */
-        }
+        #profileDropdown p, #profileDropdown a { color: #cbd5e1; }
+        #profileDropdown .font-bold { color: #f1f5f9; }
+        #profileDropdown a:hover { color: #7dd3fc; }
+        #profileDropdown a.text-red-300 { color: #fda4af; }
+        #profileDropdown a.text-red-300:hover { color: #fb7185; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -125,16 +114,11 @@
 <!-- Navbar -->
 <div class="glass-navbar flex justify-between items-center p-4 text-white relative rounded-xl m-3 md:m-6">
     <h1 class="text-white text-4xl md:text-5xl font-bold mx-auto" style="font-family: 'Rajdhani', sans-serif;">♾️ Anant Pustakalaya</h1>
-
-    <!-- Profile Icon and Dropdown -->
     <div class="absolute right-6 md:right-8 top-1/2 -translate-y-1/2">
         <div class="relative">
             <img src="https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png"
                  class="w-10 h-10 md:w-12 md:h-12 rounded-full cursor-pointer shadow-md hover:shadow-lg transition-shadow" id="profileIcon" alt="Profile Icon">
-
-            <!-- Dropdown (hidden by default) -->
-            <div id="profileDropdown"
-                 class="absolute top-full mt-2 right-0 p-4 w-60 md:w-64 rounded-xl shadow-2xl hidden z-50 break-words whitespace-normal overflow-hidden">
+            <div id="profileDropdown" class="absolute top-full mt-2 right-0 p-4 w-60 md:w-64 rounded-xl shadow-2xl hidden z-50 break-words whitespace-normal overflow-hidden">
                 <p class="font-bold text-lg mb-1" th:text="${loggedInUser.name}">Name</p>
                 <p class="text-sm mb-0.5" th:text="${loggedInUser.email}">email@example.com</p>
                 <p class="text-sm mb-3" th:text="${loggedInUser.phone}">1234567890</p>
@@ -146,12 +130,11 @@
     </div>
 </div>
 
-
 <!-- Search -->
-<div class="text-center mt-8 mb-6 md:mb-10">
-    <form th:action="@{/books/get}" method="post" class="inline-flex shadow-md rounded-lg">
+<div class="text-center mt-8 mb-6 md:mb-10 px-4">
+    <form th:action="@{/books/get}" method="post" class="inline-flex shadow-md rounded-lg w-full max-w-md">
         <input type="text" name="search" placeholder="Search books..."
-               class="px-4 py-3 rounded-l-lg border-none focus:outline-none focus:ring-2 focus:ring-sky-500 w-64 md:w-80 bg-white/90 text-gray-800 placeholder-gray-500">
+               class="px-4 py-3 rounded-l-lg border-none focus:outline-none focus:ring-2 focus:ring-sky-500 w-full bg-white/90 text-gray-800 placeholder-gray-500">
         <button type="submit" class="px-5 py-3 bg-sky-600 text-white rounded-r-lg hover:bg-sky-700 transition-colors">🔍</button>
     </form>
 </div>
@@ -159,29 +142,23 @@
 <!-- Welcome -->
 <div class="text-center my-10 md:my-16">
     <h1 class="text-white text-4xl md:text-5xl font-bold">Welcome, <span th:text="${loggedInUser.name}" class="bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-500">User</span></h1>
-    <p class="text-slate-200 mt-3 text-lg">Browse and borrow books easily from our vast collection.</p>
+    <p class="text-slate-200 mt-3 text-lg px-4">Browse and borrow books easily from our vast collection.</p>
 </div>
 
 <!-- Action Buttons -->
 <div class="mt-8 mb-12 px-4 md:px-0">
     <div class="mx-auto w-full max-w-4xl">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-            <a th:href="@{/books/all}" class="action-btn flex items-center justify-center text-base md:text-lg font-medium rounded-xl p-4 md:p-5 text-center">
-                📚 View All Books
-            </a>
-            <a th:href="@{/books/lend}" class="action-btn flex items-center justify-center text-base md:text-lg font-medium rounded-xl p-4 md:p-5 text-center">
-                📖 Lend a Book
-            </a>
-            <a th:href="@{/books/takenbooks}" class="action-btn flex items-center justify-center text-base md:text-lg font-medium rounded-xl p-4 md:p-5 text-center">
-                📖 Borrow History
-            </a>
+            <a th:href="@{/books/all}" class="action-btn flex items-center justify-center text-base md:text-lg font-medium rounded-xl p-4 md:p-5 text-center">📚 View All Books</a>
+            <a th:href="@{/books/lend}" class="action-btn flex items-center justify-center text-base md:text-lg font-medium rounded-xl p-4 md:p-5 text-center">📖 Lend a Book</a>
+            <a th:href="@{/books/takenbooks}" class="action-btn flex items-center justify-center text-base md:text-lg font-medium rounded-xl p-4 md:p-5 text-center">📖 Borrow History</a>
         </div>
     </div>
 </div>
 
 <!-- Chat Button -->
 <button id="chatToggle"
-        class="fixed bottom-8 right-6 bg-sky-600 hover:bg-sky-700 text-white p-4 rounded-full shadow-xl z-50 transition-all duration-300 ease-out transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-sky-400 focus:ring-opacity-50"
+        class="fixed bottom-6 right-5 md:bottom-8 md:right-6 bg-sky-600 hover:bg-sky-700 text-white p-4 rounded-full shadow-xl z-50 transition-all duration-300 ease-out transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-sky-400 focus:ring-opacity-50"
         aria-label="Toggle chat">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zm-4 0H9v2h2V9z" clip-rule="evenodd" />
@@ -189,21 +166,23 @@
 </button>
 
 <!-- Chat Box -->
+<!-- CHANGE [5]: Modified chat box classes for better mobile layout. -->
+<!-- It's now centered on small screens and moves to the corner on medium screens and up. -->
 <div id="chatBox"
-     class="fixed bottom-24 right-6 w-80 md:w-96 max-h-[75vh] bg-slate-800 bg-opacity-80 backdrop-filter backdrop-blur-lg rounded-xl shadow-2xl z-40 hidden flex flex-col border border-slate-700">
+     class="fixed bottom-24 right-1/2 translate-x-1/2 w-11/12 max-w-md
+            md:right-6 md:translate-x-0 md:w-96
+            max-h-[70vh] bg-slate-800 bg-opacity-80 backdrop-filter backdrop-blur-lg rounded-xl shadow-2xl z-40 hidden
+            flex flex-col border border-slate-700">
     <div class="p-3 bg-slate-700 bg-opacity-70 text-white font-semibold rounded-t-xl select-none flex justify-between items-center border-b border-slate-600">
         <span>Reva Assistant ✨</span>
         <button id="clearChatBtn" title="Restart Chat" class="text-sm text-slate-300 hover:text-sky-400 transition-colors p-1 rounded-md">🔄</button>
     </div>
-
     <div id="chatMessages" class="p-4 flex-grow flex flex-col space-y-3 text-sm overflow-y-auto">
-        <!-- Messages will appear here, styled by JS -->
+        <!-- Messages will appear here -->
     </div>
-
     <form id="hiddenSearchForm" th:action="@{/books/get}" method="post" style="display:none;">
         <input type="text" name="search" id="hiddenSearchInput" />
     </form>
-
     <div id="chatInputContainer" class="p-3 border-t border-slate-600 bg-slate-700 bg-opacity-50 rounded-b-xl">
         <form id="userInputForm" class="hidden" onsubmit="return handleUserTextInput(event)">
             <div class="flex space-x-2 items-center">
@@ -213,7 +192,7 @@
             </div>
         </form>
         <div id="initialOptionsPlaceholder" class="chat-options-container justify-center">
-            <!-- JS will populate this if no history -->
+            <!-- JS will populate this -->
         </div>
     </div>
 </div>
@@ -224,18 +203,12 @@
     document.addEventListener("DOMContentLoaded", function () {
         const profileIcon = document.getElementById("profileIcon");
         const dropdown = document.getElementById("profileDropdown");
-
         if (profileIcon && dropdown) {
-            profileIcon.addEventListener("click", function (e) {
-                e.stopPropagation();
-                dropdown.classList.toggle("hidden");
-            });
+            profileIcon.addEventListener("click", e => { e.stopPropagation(); dropdown.classList.toggle("hidden"); });
         }
-        document.addEventListener("click", function (e) {
-            if (dropdown && !dropdown.classList.contains("hidden")) {
-                if (profileIcon && !profileIcon.contains(e.target) && !dropdown.contains(e.target)) {
-                    dropdown.classList.add("hidden");
-                }
+        document.addEventListener("click", e => {
+            if (dropdown && !dropdown.classList.contains("hidden") && !profileIcon.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add("hidden");
             }
         });
     });
@@ -249,10 +222,24 @@
     const clearChatBtn = document.getElementById("clearChatBtn");
     const initialOptionsPlaceholder = document.getElementById("initialOptionsPlaceholder");
 
+    // --- CHANGE [6]: Keyboard Awareness for Mobile ---
+    // This function scrolls the input into view when focused, preventing the on-screen keyboard from hiding it.
+    function handleInputFocusForMobile() {
+        if (!userInput) return;
+        userInput.addEventListener('focus', () => {
+            // Use a timeout to allow the keyboard to finish animating into view
+            setTimeout(() => {
+                chatBox.scroll({ top: chatBox.scrollHeight, behavior: 'smooth' });
+            }, 300);
+        });
+    }
+    handleInputFocusForMobile();
+    // --- End of Keyboard Awareness ---
 
     const delay = (ms) => new Promise(res => setTimeout(res, ms));
-    const CHAT_HISTORY_KEY = "anantPustakalaya_chatHistory_v7"; // Incremented version
+    const CHAT_HISTORY_KEY = "anantPustakalaya_chatHistory_v7";
 
+    // ... (The rest of your excellent chatbot JavaScript remains the same) ...
     function saveChatHistory(history) {
         localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
     }
@@ -299,8 +286,8 @@
             const btn = document.createElement("button");
             btn.innerText = opt.label;
             btn.className = "chat-option-btn";
-            btn.onclick = async (event) => { // Added event parameter
-                event.stopPropagation(); // Prevent click from bubbling to document listener
+            btn.onclick = async (event) => {
+                event.stopPropagation();
 
                 if (targetElement === initialOptionsPlaceholder) {
                     optionsContainer.remove();
@@ -347,8 +334,8 @@
     }
 
     function scrollToBottom() {
-        setTimeout(() => { // Small delay to ensure rendering is complete
-            if (chatMessages) { // Add null check for safety
+        setTimeout(() => {
+            if (chatMessages) {
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
         }, 50);
@@ -416,7 +403,7 @@
     }
 
     async function startConversation(isToggleOpen = false) {
-        if (!isToggleOpen || currentChatHistory.length === 0) { // Clear only if it's a true start OR opening an empty chat
+        if (!isToggleOpen || currentChatHistory.length === 0) {
             chatMessages.innerHTML = "";
             currentChatHistory = [];
             saveChatHistory([]);
@@ -431,13 +418,9 @@
         if (!isToggleOpen || (isToggleOpen && currentChatHistory.length === 0)) {
             appendMessageToUI(greeting, 'bot');
             addMessageToHistory(greeting, 'bot', 'text', getMainMenuActions().options.map(o=>({label: o.label})));
-        } else if (isToggleOpen && currentChatHistory.length > 0 && currentChatHistory[0].text !== greeting && chatMessages.children.length === 0) {
-            // If opening to a non-empty history that hasn't been rendered yet, make sure greeting is shown if it's the logical start
-            // This case might be redundant if renderChatHistory handles it.
         }
 
         const mainMenu = getMainMenuActions();
-        // Only show initial greeting options if the chat history doesn't already imply another state
         if (userInputForm.classList.contains('hidden') && (!currentChatHistory.length || currentChatHistory[currentChatHistory.length -1]?.options?.some(opt => opt.label === "🔄 Start Over"))) {
             appendOptionsToUI(mainMenu.options, null, initialOptionsPlaceholder);
         }
@@ -451,11 +434,11 @@
         const mainMenu = getMainMenuActions(promptText);
         appendMessageToUI(mainMenu.prompt, 'bot');
         addMessageToHistory(mainMenu.prompt, 'bot', 'text', mainMenu.options.map(o=>({label: o.label})));
-        appendOptionsToUI(mainMenu.options, null, initialOptionsPlaceholder); // Pass null for promptMessage as text already added
+        appendOptionsToUI(mainMenu.options, null, initialOptionsPlaceholder);
     }
 
     async function handleContactInfo() {
-        const contactMsg = "You can contact us at: <br>📞 +91 9790851753 <br>📧 PanchamAyush@gmail.com";
+        const contactMsg = "You can contact us at: <br>📞 +91 9021190211 <br>📧 23020103457@reva.edu.in ";
         appendMessageToUI(contactMsg, 'bot');
         addMessageToHistory(contactMsg, 'bot');
         await delay(300);
@@ -613,26 +596,24 @@
         return false;
     }
 
-    // --- Integrated Chat Toggle and Click Outside Logic ---
     function openChat() {
         if (chatBox.classList.contains("hidden")) {
             chatBox.classList.remove("hidden");
             currentChatHistory = loadChatHistory();
-            renderChatHistory(); // Render full history first
+            renderChatHistory();
 
             if (currentChatHistory.length === 0) {
-                startConversation(true); // Pass true to indicate it's a toggle open, not a full reset
+                startConversation(true);
             } else {
                 const lastMessage = currentChatHistory[currentChatHistory.length - 1];
-                let contextRestoredFromInput = false; // For text input states
+                let contextRestoredFromInput = false;
 
                 if (lastMessage && lastMessage.from === 'bot') {
-                    // Check for states expecting text input
                     if (lastMessage.text.includes("type the book name or keywords")) {
                         userInputForm.classList.remove("hidden");
                         userInput.placeholder = "Type book name...";
                         userInput.focus();
-                        userInputForm.customSubmitHandler = async (query) => { /* ... your search submit handler ... */
+                        userInputForm.customSubmitHandler = async (query) => {
                             userInputForm.classList.add("hidden");
                             const searchingMsg = `Okay, searching for "<strong>${query}</strong>"... This will refresh the page.`;
                             appendMessageToUI(searchingMsg, 'bot'); addMessageToHistory(searchingMsg, 'bot');
@@ -649,14 +630,9 @@
                     }
                 }
 
-                // If no text input context was restored, and options were the last thing (now handled by renderChatHistory),
-                // or if the chat is simply being re-opened to a state without explicit next step.
-                // renderChatHistory will handle re-displaying options if they were the last item.
-                // If after renderChatHistory, userInputForm is still hidden and initialOptionsPlaceholder is empty,
-                // it means the conversation ended or was in a neutral state.
                 if (!contextRestoredFromInput && userInputForm.classList.contains('hidden') && initialOptionsPlaceholder.children.length === 0) {
                     const lastBotMessageWithOptions = [...currentChatHistory].reverse().find(m => m.from === 'bot' && m.options);
-                    if (!lastBotMessageWithOptions) { // If no history with options at the end
+                    if (!lastBotMessageWithOptions) {
                         showMainMenuOptions("Welcome back! How can I assist you now?");
                     }
                 }
@@ -677,11 +653,7 @@
 
     chatToggle.addEventListener("click", (e) => {
         e.stopPropagation();
-        if (chatBox.classList.contains("hidden")) {
-            openChat();
-        } else {
-            closeChat();
-        }
+        if (chatBox.classList.contains("hidden")) { openChat(); } else { closeChat(); }
     });
 
     document.addEventListener("click", function (e) {
@@ -691,14 +663,12 @@
             }
         }
     });
-    // --- End of Integrated Chat Toggle Logic ---
-
 
     if(clearChatBtn) {
-        clearChatBtn.addEventListener("click", (e) => { // Added event parameter
-            e.stopPropagation(); // Prevent click from bubbling
+        clearChatBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
             if (confirm("Are you sure you want to restart the chat? This will clear the current conversation.")) {
-                startConversation(false); // false: it's a full reset, not just toggle open
+                startConversation(false);
             }
         });
     } else {

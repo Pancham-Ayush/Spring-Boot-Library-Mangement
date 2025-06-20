@@ -1,83 +1,94 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Taken Books</title>
+    <title>My Borrowed Books</title>
     <meta charset="UTF-8">
+    <!-- ESSENTIAL: This tag ensures the page scales correctly on all devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Using a modern, readable font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
+        /* PERFORMANCE-FRIENDLY: Replaced the moving gradient with a static one for better mobile performance. */
         body {
-            background: linear-gradient(135deg, #efdb06, #ff4b2b, #4b79a1, #283e51);
-            background-size: 400% 400%;
-            animation: gradientMove 8s ease infinite;
-            font-family: 'Rajdhani', sans-serif;
-            margin: 0;
-            padding: 0;
+            background: linear-gradient(135deg, #efdb06, #ff4b2b, #4b79a1);
+            background-attachment: fixed; /* Keeps the background from scrolling */
+            font-family: 'Poppins', sans-serif;
         }
 
-        .glass-table {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-            padding: 20px;
-            overflow: hidden;
-        }
-
-        .back-button {
-            background-color: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-
-        .back-button:hover {
-            background-color: rgba(255, 255, 255, 0.3);
+        /* This CSS adds labels before the data on the mobile "card" view */
+        @media (max-width: 767px) {
+            .mobile-card td::before {
+                content: attr(data-label);
+                font-weight: 600; /* semibold */
+                width: 120px;
+                display: inline-block;
+                margin-right: 0.5rem;
+            }
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-start text-white pt-10 px-4">
+<body class="min-h-screen flex flex-col items-center text-white pt-6 sm:pt-10 px-4">
 
-<!-- Title -->
 <div class="w-full max-w-6xl">
-    <h2 class="text-4xl font-bold mb-4">📚 Books You Have Taken</h2>
+    <!-- Header Section -->
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl sm:text-4xl font-bold">📚 My Books</h2>
+        <a th:href="@{/books}" class="bg-white/20 hover:bg-white/30 backdrop-blur text-white py-2 px-4 rounded-lg font-bold transition duration-300 whitespace-nowrap">
+            ← Home
+        </a>
+    </div>
 
-    <!-- Back Button (left-aligned) -->
-    <a th:href="@{/books}" class="back-button mb-4 inline-block">← Back to Home</a>
-
-    <!-- Table -->
-    <div class="glass-table overflow-auto">
-        <table class="min-w-full text-left text-white">
-            <thead>
+    <!--
+      HANDLE EMPTY STATE:
+      This 'th:if' block will only be displayed if the 'taken' list is NOT empty.
+    -->
+    <div th:if="${not #lists.isEmpty(taken)}" class="w-full">
+        <table class="w-full text-left">
+            <!-- Table Headers: Hidden on mobile, visible on medium screens and up -->
+            <thead class="hidden md:table-header-group">
             <tr class="border-b border-white/30">
                 <th class="p-4">Book Name</th>
                 <th class="p-4">Book ID</th>
                 <th class="p-4">Issue Date</th>
-                <th class="p-4">Returning Date</th>
+                <th class="p-4">Return Date</th>
                 <th class="p-4">User Name</th>
                 <th class="p-4">Email</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="record : ${taken}" class="border-t border-white/10 hover:bg-white/10">
-                <td class="p-4" th:text="${record.bookName}">Book Name</td>
-                <td class="p-4" th:text="${record.bookid}">Book ID</td>
-                <td class="p-4" th:text="${#dates.format(record.date, 'yyyy-MM-dd')}">Issue Date</td>
-                <td class="p-4" th:text="${#dates.format(record.returnDate, 'yyyy-MM-dd')}">Return Date</td>
-                <td class="p-4" th:text="${record.name}">Name</td>
-                <td class="p-4" th:text="${record.email}">Email</td>
+            <!--
+              RESPONSIVE LAYOUT:
+              - On mobile, each 'tr' becomes a flex-column "card".
+              - On medium screens and up, it reverts to a standard table row.
+            -->
+            <tr th:each="record : ${taken}"
+                class="mobile-card flex flex-col mb-4 p-4 rounded-lg bg-white/10 backdrop-blur-md md:table-row md:p-0 md:bg-transparent md:border-t md:border-white/10 md:hover:bg-white/10">
+
+                <td class="py-2 md:p-4" data-label="Book Name:" th:text="${record.bookName}">Book Name</td>
+                <td class="py-2 md:p-4" data-label="Book ID:" th:text="${record.bookid}">Book ID</td>
+                <td class="py-2 md:p-4" data-label="Issued On:" th:text="${#dates.format(record.date, 'dd-MMM-yyyy')}">Issue Date</td>
+                <td class="py-2 md:p-4" data-label="Return By:" th:text="${#dates.format(record.returnDate, 'dd-MMM-yyyy')}">Return Date</td>
+                <td class="py-2 md:p-4" data-label="User:" th:text="${record.name}">Name</td>
+                <td class="py-2 md:p-4" data-label="Email:" th:text="${record.email}">Email</td>
             </tr>
             </tbody>
         </table>
+    </div>
+
+    <!--
+      HANDLE EMPTY STATE:
+      This 'th:if' block will only be displayed if the 'taken' list IS empty.
+    -->
+    <div th:if="${#lists.isEmpty(taken)}"
+         class="bg-white/10 backdrop-blur-md rounded-lg p-8 mt-8 text-center w-full">
+        <p class="text-2xl mb-2">🤔</p>
+        <h3 class="text-xl font-semibold mb-2">No Books Borrowed</h3>
+        <p class="text-white/80">You haven't borrowed any books yet. Go find a good one!</p>
     </div>
 </div>
 

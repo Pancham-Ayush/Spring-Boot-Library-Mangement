@@ -256,15 +256,19 @@ import java.util.*;
             ledgerService.add(lendingRecord);
             model.addAttribute("lendingrecord",lendingRecord);
             String subject = "Book Issued Successfully – " + book.get().getTitle();
+
             String body = "Dear " + lendingRecord.getName() + ",\n\n"
-                    + "You have successfully borrowed the book: " + book.get().getTitle() + ".\n"
+                    + "Thank you for using Reva Library.\n\n"
+                    + "You have successfully borrowed the book:\n\n"
+                    + "Title: " + book.get().getTitle() + "\n"
                     + "Author: " + book.get().getAuthor() + "\n"
                     + "Return Date: " + lendingRecord.getDate() + "\n\n"
-                    + "Please ensure to return the book on time to avoid any penalties.\n\n"
+                    + "Please ensure that the book is returned by the due date to avoid any late fees.\n\n"
                     + "Happy Reading! 📚\n"
-                    + "Reva Library Team\n"
-                    + "------------------------------\n"
+                    + "-- Reva Library Team\n\n"
+                    + "----------------------------------------\n"
                     + "This is an automated message. Please do not reply.";
+
 
 
             emailService.sendEmail(lendingRecord.getEmail(), subject, body);

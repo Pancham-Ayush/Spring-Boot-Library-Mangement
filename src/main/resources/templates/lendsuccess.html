@@ -1,112 +1,49 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <!-- ESSENTIAL: This tag ensures the page scales correctly on all devices. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirm Lending</title>
+
+    <!-- Using a modern, readable font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
+        /* PERFORMANCE-FRIENDLY: Replaced the moving gradient with a static one. */
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #ff7eb3, #ff4b2b, #4b79a1, #283e51);
-            background-size: 400% 400%;
-            animation: gradientMove 8s ease infinite;
-            color: white;
+            background: linear-gradient(135deg, #ff7eb3, #ff4b2b, #4b79a1);
+            background-attachment: fixed; /* Keeps the background from scrolling */
+            font-family: 'Poppins', sans-serif;
         }
-
-        .container {
-            max-width: 500px;
-            margin: auto;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        h2 {
-            text-align: center;
-            color: white;
-        }
-
-        .home-icon {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 24px;
-            text-decoration: none;
-            color: white;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            margin-top: 10px;
-            color: white;
-            font-weight: bold;
-        }
-
-        input {
-            padding: 8px;
-            margin-top: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        button {
-            margin-top: 15px;
-            padding: 10px;
-            background-color: #ff4b2b;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #ff7eb3;
-        }
-
-        .cancel-link {
-            display: block;
-            text-align: center;
-            margin-top: 10px;
-            color: white;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-
-        /* Ensure spans inside p have white color */
-        p > span {
-            color: white;
+        /* Style for the date input placeholder */
+        input[type="date"]:invalid::-webkit-calendar-picker-indicator {
+            filter: invert(0.5);
         }
     </style>
 </head>
 
-<body>
-<a href="/admin" class="home-icon">&#8962;</a>
-<div class="container">
-    <h2>Confirm Lending</h2>
-    <p><strong>Book Id:</strong> <span th:text="${book.id}"></span></p>
-    <p><strong>Book Title:</strong> <span th:text="${book.title}"></span></p>
-    <p><strong>Author:</strong> <span th:text="${book.author}"></span></p>
-    <p><strong>Genre:</strong> <span th:text="${book.genre}"></span></p>
-    <p><strong>Description:</strong> <span th:text="${book.description}"></span></p>
-    <p><strong>Available Copies:</strong> <span id="availableCopies" th:text="${book.available}"></span></p>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 text-white">
 
+<!-- Main Content Card -->
+<div class="bg-white/20 backdrop-blur-lg rounded-2xl shadow-xl p-6 sm:p-8 w-full max-w-md">
+
+    <h2 class="text-3xl font-bold mb-4 text-center">Confirm Lending</h2>
+
+    <!-- Book Details Section -->
+    <div class="bg-black/20 rounded-lg p-4 mb-6 text-sm">
+        <h3 class="font-bold text-lg mb-2" th:text="${book.title}">Book Title</h3>
+        <p><strong>Author:</strong> <span th:text="${book.author}"></span></p>
+        <p><strong>ID:</strong> <span th:text="${book.id}"></span></p>
+        <p><strong>Available:</strong> <span id="availableCopies" class="font-bold" th:text="${book.available}"></span></p>
+    </div>
+
+    <!-- Lending Form -->
     <form th:action="@{/books/lendend}" method="post">
+        <!-- Hidden fields to pass data -->
         <input type="hidden" name="bookid" th:value="${record.bookid}">
         <input type="hidden" name="bookName" th:value="${record.bookName}">
         <input type="hidden" name="name" th:value="${record.name}">
@@ -114,67 +51,100 @@
         <input type="hidden" name="id" th:value="${record.id}">
         <input type="hidden" name="phone" th:value="${record.phone}">
 
-        <label>Borrower's Name:</label>
-        <p><span th:text="${record.name}"></span></p>
+        <!-- Borrower Details -->
+        <div class="space-y-4">
+            <div>
+                <label class="font-semibold">Borrower:</label>
+                <p class="text-lg" th:text="${record.name}">Borrower Name</p>
+                <p class="text-sm opacity-80" th:text="${record.email}">borrower@email.com</p>
+            </div>
 
-        <label>Borrower's Phone:</label>
-        <p><span th:text="${record.phone}"></span></p>
+            <div>
+                <label for="returnDate" class="font-semibold block mb-1">Return Date:</label>
+                <input type="date" id="returnDate" name="returnDate" required
+                       class="w-full p-3 rounded-lg bg-gray-200 text-black focus:outline-none focus:ring-2 focus:ring-pink-400">
+            </div>
 
-        <label>Borrower's Email:</label>
-        <p><span th:text="${record.email}"></span></p>
+            <!-- Status Message: Displayed by JavaScript if book is unavailable -->
+            <div id="statusMessage" class="hidden p-3 rounded-lg text-center font-semibold"></div>
 
-        <label for="returnDate">Returning Date:</label>
-        <input type="date" id="returnDate" name="returnDate" required>
-
-        <button type="submit" id="submitButton">Confirm Lend</button>
+            <!-- Action Buttons -->
+            <div class="pt-4 space-y-3">
+                <button type="submit" id="submitButton"
+                        class="w-full py-3 bg-pink-600 hover:bg-pink-700 rounded-lg font-bold text-lg transition duration-300
+                                   disabled:bg-gray-500 disabled:cursor-not-allowed">
+                    Confirm Lend
+                </button>
+                <a th:href="@{/books}"
+                   class="block w-full py-3 text-center bg-transparent hover:bg-white/20 rounded-lg transition duration-300">
+                    Cancel
+                </a>
+            </div>
+        </div>
     </form>
-
-    <a href="/books" class="cancel-link">Cancel</a>
 </div>
 
 <script>
-    let today = new Date();
-    let maxDate = new Date();
-    maxDate.setMonth(today.getMonth() + 1);
+    // --- Set Date Input Constraints ---
+    const today = new Date();
+    const maxDate = new Date();
+    maxDate.setMonth(today.getMonth() + 1); // Allow lending for up to 1 month
 
-    let todayStr = today.toISOString().split("T")[0];
-    let maxDateStr = maxDate.toISOString().split("T")[0];
+    const todayStr = today.toISOString().split("T")[0];
+    const maxDateStr = maxDate.toISOString().split("T")[0];
 
-    let dateInput = document.getElementById("returnDate");
+    const dateInput = document.getElementById("returnDate");
     dateInput.setAttribute("min", todayStr);
     dateInput.setAttribute("max", maxDateStr);
 
-    let bookId = document.querySelector("input[name='bookid']").value;
-    let availableCopiesElement = document.querySelector("#availableCopies");
-    let submitButton = document.querySelector("#submitButton");
+    // --- Live Availability Check ---
+    const bookId = document.querySelector("input[name='bookid']").value;
+    const availableCopiesElement = document.getElementById("availableCopies");
+    const submitButton = document.getElementById("submitButton");
+    const statusMessageElement = document.getElementById("statusMessage");
 
     async function updateAvailableCopies() {
         try {
-            let response = await fetch(`/books/book-availability/${bookId}`);
-            let data = await response.json();
+            const response = await fetch(`/books/book-availability/${bookId}`);
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const data = await response.json();
             availableCopiesElement.textContent = data.available;
 
             if (data.available > 0) {
                 submitButton.disabled = false;
+                statusMessageElement.classList.add('hidden'); // Hide any previous error messages
             } else {
                 submitButton.disabled = true;
-                alert("No copies available for lending!");
+                // IMPROVED FEEDBACK: Show an inline message instead of an alert
+                statusMessageElement.textContent = "This book is no longer available!";
+                statusMessageElement.classList.remove('hidden');
+                statusMessageElement.classList.add('bg-red-500', 'text-white');
             }
         } catch (error) {
             console.error("Error fetching live availability:", error);
+            statusMessageElement.textContent = "Could not check availability.";
+            statusMessageElement.classList.remove('hidden');
+            statusMessageElement.classList.add('bg-yellow-500', 'text-black');
         }
     }
 
-    setInterval(updateAvailableCopies, 5000);
-    updateAvailableCopies();
+    // Check availability every 5 seconds and once on page load
+    const availabilityInterval = setInterval(updateAvailableCopies, 5000);
+    document.addEventListener('DOMContentLoaded', updateAvailableCopies);
 
+    // Final check before submitting the form
     document.querySelector("form").addEventListener("submit", async function (event) {
-        await updateAvailableCopies();
-        if (submitButton.disabled) {
-            event.preventDefault();
+        // Stop the interval to prevent multiple requests during submission
+        clearInterval(availabilityInterval);
+
+        event.preventDefault(); // Pause submission to do a final check
+        await updateAvailableCopies(); // Perform the last check
+
+        if (!submitButton.disabled) {
+            this.submit(); // If still available, submit the form
         }
     });
 </script>
 </body>
-
 </html>
